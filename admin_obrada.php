@@ -65,7 +65,7 @@ if(isset($_GET['obrada']))
 			$message[ 'proslost' ][] = array( 'ime_igre' => $row['ime_igre'], 'pobjednik' => $row['pobjednik'], 'datum' => $row['datum'] ,
 		 'vrijeme' => $row['vrijeme'],  'dobiveno' => 'Nema dobitnika!');
 		}
-		if($row['dobiveno']==='1')
+		if($row['dobiveno']==='1' || $row['dobiveno']==='10' || $row['dobiveno']==='11')
 		{
 			$message[ 'proslost' ][] = array( 'ime_igre' => $row['ime_igre'], 'pobjednik' => $row['pobjednik'], 'datum' => $row['datum'] ,
 		 'vrijeme' => $row['vrijeme'],  'dobiveno' => 'Dobitnik je izvučen!');
@@ -86,14 +86,14 @@ if(isset($_GET['vrijeme_0']) && $_GET['datum'])
 	$message = [];
   $brojevi=  [];
 	$message['ima']=0;
-	$message['i_slovo']=0;
+	$message['i_slovo']='';
 	$message['slovo']='';
 	$nadimak='';
 		$kontr_broj;
 		$brojevi;
 		$niz;
-		$ima=0;
-		$ima_slovo=0;
+		$ima='';
+		$ima_slovo='';
 
   for($i=0; $i<7; $i++)
   {
@@ -123,16 +123,15 @@ foreach ($st->fetchAll() as $row)
 	{
 		if($row['slovo']===$slovo)
 		{
-			$message['i_slovo']=1;
-			$ima_slovo=1;
+			$message['i_slovo']='11';
+			$ima='11';
 		}
 		else {
-			$message['i_slovo']=0;
-			$ima_slovo=0;
+			$message['i_slovo']='10';
+			$ima='10';
 		}
 		$message[ 'dobitni_listic' ][] = array( 'korisnicko_ime' => $row['korisnicko_ime'], 'id' => $row['id'], 'kombinacija' => $row['kombinacija'], 'slovo' =>$slovo );
 		$message['ima']=1;
-		$ima=1;
 		$nadimak = $row['korisnicko_ime'];
 		$id = $row['id'];
 		$kombinacija=$row['kombinacija'] ;
@@ -140,8 +139,8 @@ foreach ($st->fetchAll() as $row)
 	}
 	else {
 	$message['ima']=0;
-	$ima=0;
-	$message['slovo']=0;
+	$ima='0';
+	$message['slovo']=$slovo;
 	}
 
 
@@ -158,17 +157,15 @@ $st= $db->exec("INSERT INTO Proslost (ime_igre, pobjednik, datum, vrijeme, dobiv
 //stavi da je listić dobitna_kombinacijadb=DB::getConnection();
 
 	$db=DB::getConnection();
-	if($ima_slovo===1)  //ako ima slovo i brojeve, onda je 11
+	if($ima==='11')  //ako ima slovo i brojeve, onda je 11
 	{
 		$st = $db->exec(  "UPDATE Loto SET dobitan = '11' WHERE korisnicko_ime = '".$nadimak."' " );
 	}
-	if($ima_slovo===0) // ako ima slovo ali nema brojeve, onda je 10
+	if($ima==='10') // ako ima slovo ali nema brojeve, onda je 10
 	{
 		$st = $db->exec(  "UPDATE Loto SET dobitan = '10' WHERE korisnicko_ime = '".$nadimak."' " );
 
 	}
-
-
 
 
 
@@ -258,11 +255,11 @@ if(isset($_GET['vrijeme_3']) && isset($_GET['datum']))
 	$nadimak='';
 	$kontr_broj;
 	$brojevi;
-	$message['i_dop']=0;
-	$ima_dopunske=0;
+	$message['i_dop']='';
+	$ima_dopunske='';
 	$niz1='';
 	$niz2='';
-	$ima=0;
+	$ima='';
 
 	for($i=0; $i<5; $i++)
 	{
@@ -300,12 +297,14 @@ if(isset($_GET['vrijeme_3']) && isset($_GET['datum']))
 		{
 			if($razlika2===null)
 			{
-				$message['i_dop']=1;
-				$ima_dopunske=1;
+				$message['i_dop']='11';
+				$ima_dopunske='1';
+				$ima='11';
 			}
 			else {
-				$message['i_dop']=0;
-				$ima_dopunske=0;
+				$message['i_dop']='10';
+				$ima_dopunske='0';
+				$ima='10';
 			}
 			$message[ 'dobitni_listic' ][] = array( 'korisnicko_ime' => $row['korisnicko_ime'], 'id' => $row['id'], 'kombinacija' => $row['kombinacija'], 'dopunski' =>$row['dopunski'] );
 			$message['ima']=1;
@@ -318,8 +317,8 @@ if(isset($_GET['vrijeme_3']) && isset($_GET['datum']))
 		}
 		else {
 		$message['ima']=0;
-		$ima=0;
-	$message['i_dop']=0;
+		$ima='0';
+	$message['i_dop']='0';
 		}
 
 
@@ -336,11 +335,11 @@ if(isset($_GET['vrijeme_3']) && isset($_GET['datum']))
 	//stavi da je listić dobitna_kombinacijadb=DB::getConnection();
 
 		$db=DB::getConnection();
-		if($ima_dopunske===1)  //ako ima slovo i brojeve, onda je 11
+		if($ima==='11')  //ako ima slovo i brojeve, onda je 11
 		{
 			$st = $db->exec(  "UPDATE Euro SET dobitan = '11' WHERE korisnicko_ime = '".$nadimak."' " );
 		}
-		if($ima_dopunske===0) // ako ima slovo ali nema brojeve, onda je 10
+		if($ima==='10') // ako ima slovo ali nema brojeve, onda je 10
 		{
 			$st = $db->exec(  "UPDATE Euro SET dobitan = '10' WHERE korisnicko_ime = '".$nadimak."' " );
 

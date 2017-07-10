@@ -298,7 +298,7 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
 
 		if($row['izvucen']==='1')
     {
-        $poruka= "IGRA BINGO"."\\nListić je dobitan!";
+        $poruka= "IGRA BINGO"."\\nListić je dobitan!\\nDobitak: 9.500.000,00 kuna!";
         echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
         $valjan=1;
 
@@ -325,9 +325,16 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
   foreach ($st->fetchAll() as $row)
   {
 
-		if($row['dobitan']==='1')
+		if($row['dobitan']==='11')
     {
-        $poruka= "IGRA EUROJACKPOT"."\\nListić je dobitan!";
+        $poruka= "IGRA EUROJACKPOT"."\\nListić je dobitan!\\nPogođena je i kombinacija i dopunski broj!\\nDobitak: 344.448.023,69 kuna! ";
+        echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
+        $valjan=1;
+
+    }
+    if($row['dobitan']==='10')
+    {
+        $poruka= "IGRA EUROJACKPOT"."\\nListić je dobitan!\\nPogođena je kombinacija, ali ne i dopunski brojevi!\\nDobitak:598.523,85 kuna!";
         echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
         $valjan=1;
 
@@ -354,12 +361,18 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
   foreach ($st->fetchAll() as $row)
   {
 
-		if($row['dobitan']==='1')
+		if($row['dobitan']==='11')
     {
-        $poruka= "IGRA LOTO 7/49"."\\nListić je dobitan!";
+        $poruka= "IGRA LOTO 7/49"."\\nListić je dobitan!\\Pogođena je i kombinacija i slovo!\\Dobitak: 14.188.524,98 kuna!";
         echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
         $valjan=1;
 
+    }
+    if($row['dobitan']==='10')
+    {
+      $poruka= "IGRA LOTO 7/49"."\\nListić je dobitan!\\nPogođena je kombinacija, ali ne i slovo!\\nDobitak:6.175.631,97 kuna!";
+        echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
+        $valjan=1;
     }
     if($row['dobitan']==='0')
     {
@@ -374,7 +387,7 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
   $db=DB::getConnection();
   try
   {
-    $st = $db->prepare( 'SELECT dobio FROM Kladionica WHERE listic= :kb AND proslo= :pr' );
+    $st = $db->prepare( 'SELECT dobio, dobitak FROM Kladionica WHERE listic= :kb AND proslo= :pr' );
     $st->execute( array( 'kb' =>$_POST['provjera_dobitka'], 'pr'=>'1' ) );
   }
   catch( PDOException $e ) { echo 'Greška:' . $e->getMessage() ; return; }
@@ -385,7 +398,9 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
 
 		if($row['dobio']==='1')
     {
-        $poruka= "IGRA KLAĐENJE NA KONJE"."\\nListić je dobitan!";
+        $dobitak=$row['dobitak'];
+      
+        $poruka= "IGRA KLAĐENJE NA KONJE"."\\nListić je dobitan!\\nDobitak: ".$dobitak." kuna!";
         echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
         $valjan=1;
 
@@ -591,7 +606,7 @@ Unesite kontrolni broj:  <input type="text" id="provjera_dobitka" name="provjera
 
  <div class="gumbi2" >
  Emisije sa zadnjih izvlačenja:<a href="https://www.youtube.com/watch?v=s9hQBKNoOPo" > Bingo </a> <a href="https://www.youtube.com/watch?v=OFBnQP4jcqo" > Loto 7/39 </a> <a href="https://www.youtube.com/watch?v=tj4r8b9ePUo"> Eurojackpot </a>
-  
+
 </div>
 </br></br></br></br></br></br>
 <article>
