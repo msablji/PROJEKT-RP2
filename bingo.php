@@ -14,7 +14,7 @@ if(isset($_POST['broj']) && !isset($_POST['potvrdi']) && !isset($_POST['ponisti'
   {
     if($_SESSION['korisnik']!=='' )
     {
-  
+
       $_SESSION['oznaceni'][(int)$_POST['broj']-1] =1;
       array_push($_SESSION['kombinacija'],$_POST['broj'] );
       $_SESSION['ukupno']=(int)$_SESSION['ukupno']+1;
@@ -196,7 +196,7 @@ if(isset($_POST['broj']) && !isset($_POST['potvrdi']) && !isset($_POST['ponisti'
          ?>
 
         <td><input type="submit" class="buttonstyle" name="broj" value="<?php echo $id?>" id="<?php echo $id?>"
-          style="background-color: <?php if($_SESSION['oznaceni'][$id-1]===1) echo "#DC143C"; else echo "#FFEBCD";?>"/> </td>
+          style="background-color: <?php if($_SESSION['oznaceni'][$id-1]===1) echo "#DC143C"; else echo "#FFEBCD";?>" <?php if ($_SESSION['oznaceni'][$id-1]===1){ ?> disabled <?php   } ?>/> </td>
 
           <?php
 

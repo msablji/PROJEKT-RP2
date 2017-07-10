@@ -13,7 +13,11 @@ if(isset($_POST['admin']))
   header('Location: admin.html');
   exit;
 }
-
+if(isset($_POST['uredi_korisnike']))
+{
+	header('Location: uredi_korisnik.php');
+  exit;
+}
 
 if(isset($_POST['bingo']))
 {
@@ -248,7 +252,7 @@ if(isset($_POST['novi']))
         }
         catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
 
-        echo "Dodani ste u bazu! Klinite na registracijski link u e-mail poruci.";
+        echo '<script type="text/javascript">alert("Dodani ste u bazu! Klinite na registracijski link u e-mail poruci.");</script>';
         $_SESSION['logiran']=1;
         $_SESSION['korisnik']=$_POST["nadimak2"];
 
@@ -435,7 +439,7 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
 div.logiran{
   border-color: black;
         height:250px;
-		     width:320px;
+		width:350px;
         text-align:left;
         border: 1px solid black;
         border-radius: 5px;
@@ -556,10 +560,10 @@ if($_SESSION['logiran']===1)
   <aside><nav>
 <ul class="a"><h1 style="font-family:courier">Igraj!</h1>
   <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-  <li> <button type="submit" style=" height: 40px; width: 100px; font-family:courier"id="bingo" name="bingo">Bingo</button></li>
-  <li><button type="submit" style=" height: 40px; width: 100px; font-family:courier" id="loto" name="loto">Loto 7/39</button></li>
-  <li><button type="submit" style=" height: 40px; width: 100px; font-family:courier" id="kladenje" name="kladenje">Klađenje</button></li>
-  <li><button type="submit" style=" height: 40px; width: 100px; font-family:courier" id="euro" name="euro">Eurojackpot</button></li>
+  <li> <button type="submit" style=" height: 40px; width: 120px; font-family:courier"id="bingo" name="bingo">Bingo</button></li>
+  <li><button type="submit" style=" height: 40px; width: 120px; font-family:courier" id="loto" name="loto">Loto 7/39</button></li>
+  <li><button type="submit" style=" height: 40px; width: 120px; font-family:courier" id="kladenje" name="kladenje">Klađenje</button></li>
+  <li><button type="submit" style=" height: 40px; width: 120px; font-family:courier" id="euro" name="euro">Eurojackpot</button></li>
 </ul> </form>
 </nav></aside>
 
@@ -571,9 +575,9 @@ else
   <?php
   echo '<h2 style="text-align:center;">'."Logirani ste kao admin! ". '</h2>';
 	?><form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-	 <button type="submit" name="uredi_igru" style=" height: 40px; width: 80px;">Uredi igre</button>
-     <button type="submit" name="uredi_korisnike"  style=" height: 40px; width: 80px;">Uredi korisnike</button></form>
-	 <button type="submit" name="logout"  style=" height: 40px; width: 80px;">Logout</button></form>
+	 <button type="submit" name="uredi_igru" style="height: 50px; width: 100px;">Uredi igre</button>
+     <button type="submit" name="uredi_korisnike"  style="height: 50px; width: 100px;">Uredi korisnike</button></br>
+	 <button type="submit" name="logout"  style=" height: 50px; width: 100px;">Logout</button></form>
   </div><?php
 }
 } ?>

@@ -6,30 +6,67 @@
     </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
         <style>
-          div{
+        p.vrijeme{
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 50%;
+        }
+        div{
+
+            border-color: black;
+            height:400px;
+            text-align:center;
+            border: 1px solid black;
+            border-radius: 5px;
             position:absolute;
-            align:center;
-            top: 10%;
-            left:80%;
-            border:1px solid black;
-            borderRadius:5px;
-            width: 200px;
-            height:80px;
-            textAlign:center;
-          }
-            th, td {font-family: Arial; font-size: 15pt;}
+            top:100px;
+            right:0;
+        background-color:  #ffffcc;
+      }
+            th, td {
+              font-family: Arial;
+              font-size: 15pt;
+              background-color:  #ffffcc;
+              border: 1px solid black;
+              border-radius: 5px;
+            }
+            div.gumbi{
+              border-color: black;
+              height:150px;
+              width: 65%;
+              text-align:left;
+              border: 1px solid black;
+              border-radius: 5px;
+            background-color:  #ffffcc;
+              position:absolute;
+              top:15%;
+              left:0%;
+            }
+            div.logiran{
+              border-color: black;
+                    height: 100px;
+            		     width:200px;
+                    text-align:center;
+                    border: 1px solid black;
+                    border-radius: 5px;
+                    position:absolute;
+                    top:5%;
+                    right:2%;
+            }
 
         </style>
   </head>
   <body>
     <h1 style="font-family:courier;">Klađenje na konje</h1>
-
-    <h2 style="font-family:courier;">Pogledajte popis pobjednika u proteklim utrkama <button type="submit" id="popis">Pogledaj</button></h2>
-    <h2 style="font-family:courier;">Pogledajte utrke u tijeku i okladite se na jednog konja <button type="submit" id="okladi">Pogledaj</button></h2>
-    <p id="preostalo" style="font-family:courier;"></p>
-    <div id="div" style="font-family:courier;"><button  style="font-family:courier;"type="submit" id="pocetna">Povratak na početnu stranicu</button></div>
+    <div class="gumbi">
+    <h2 style="font-family:courier;">Pogledajte popis pobjednika u proteklim utrkama <button type="submit" id="popis"  style="font-family:courier;">Pogledaj</button></h2>
+    <h2 style="font-family:courier;">Pogledajte utrke u tijeku i okladite se na jednog konja <button type="submit" id="okladi"  style="font-family:courier;">Pogledaj</button></h2>
+  </div>
+    <p class="vrijeme" id="preostalo" style="font-family:courier;"></p>
+    <div class="logiran" id="div" style="font-family:courier;"><button  style="font-family:courier;"type="submit" id="pocetna"  style="font-family:courier;">Povratak na početnu stranicu</button></div>
   </br>
-  <table id="tablica" style="font-family:courier;"></table>
+  <table id="tablica" style="font-family:courier; margin-top:200px; margin-left:10px;" ></table>
     <script>
     var korisnik;
     $(document).ready(function()
@@ -124,20 +161,20 @@
                console.log( "Vratilo je " + JSON.stringify( data ) );
                  $("#tablica").empty();
                  var tr = $( "<tr></tr>" );
-                 var td1=$( "<th></th>" ).css("border", "2px solid red").html("Pobjednički konj");
-                 var td2=$( "<th></th>" ).css("border", "2px solid red").html("Datum pobjede");
-                 var td3=$( "<th></th>" ).css("border", "2px solid red").html("Vrijeme pobjede");
+                 var td1=$( "<th></th>" ).css("border", "2px solid red").css("font-family", "courier").html("Pobjednički konj");
+                 var td2=$( "<th></th>" ).css("border", "2px solid red").css("font-family", "courier").html("Datum pobjede");
+                 var td3=$( "<th></th>" ).css("border", "2px solid red").css("font-family", "courier").html("Vrijeme pobjede");
                  tr.append(td1).append(td2).append(td3);
                  $("#tablica").append( tr );
 
                  for( var i = 0; i < data.pobjednici.length; ++i )
                	{
                  		var tr = $( "<tr></tr>" );
-                 		var td_ime_konja = $( "<td></td>" ).css("border", "1px solid red").html( data.pobjednici[i].ime_konja );
+                 		var td_ime_konja = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( data.pobjednici[i].ime_konja );
                     var date = new Date(data.pobjednici[i].datum); //Get the current date
                   var date2 = date.getDate() +"."+ date.getMonth() +"."  +  date.getFullYear() +".";
-                 		var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( date2 );
-                    var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( data.pobjednici[i].vrijeme+ " sati");
+                 		var td_datum = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( date2 );
+                    var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( data.pobjednici[i].vrijeme+ " sati");
 
                  		tr.append( td_ime_konja ).append( td_datum ).append(td_vrijeme);
                  		$("#tablica").append( tr );
@@ -182,7 +219,7 @@
           {
             var s= "Trenutno je: "+t.getHours()+":"+t.getMinutes()+":" +t.getSeconds()+", a iduća utrka je sutra u 11:00:00 sati.";
           }
-            $("#preostalo").css({textAlign:"center",position:"relative", border:"3px solid red", fontSize:"25px"}).html(s);
+            $("#preostalo").css({textAlign:"center",position:"relative", left:"0", top:"210px",border:"3px solid red", fontFamily:"courier", fontSize:"25px"}).html(s);
 
 
         }
@@ -208,8 +245,8 @@
             for( var i = 0; i < data.utrka.length; ++i )
           	{
             		var tr = $( "<tr></tr>" );
-            		var td_ime = $( "<td></td>" ).html( data.utrka[i].ime );
-            		var td_koeficijent = $( "<td></td>" ).html( data.utrka[i].koeficijent );
+            		var td_ime = $( "<td></td>" ).css("font-family", "courier").html( data.utrka[i].ime );
+            		var td_koeficijent = $( "<td></td>" ).css("font-family", "courier").html( data.utrka[i].koeficijent );
             		var gumb= $("<input type='radio'>").attr("name", "radio").attr("id",data.utrka[i].id );
 
             		tr.append( td_ime ).append( td_koeficijent ).append( gumb );
@@ -220,7 +257,7 @@
 
             var s="Unesite iznos koji želite uplatiti: ";
             var unos =$("<input type='text'/>").attr("id", "unos");
-            var potvrda = $("<input type='submit'>").attr("id", "potvrda").html("Potvrdi");
+            var potvrda = $("<input type='submit'>").attr("id", "potvrda").css("font-family", "courier").html("Potvrdi");
             $("#tablica").append("</br>").append(s).append(unos).append(potvrda);
 
 

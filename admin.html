@@ -6,20 +6,41 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
     <style>
     div{
-      position:absolute;
-      align:center;
-      top: 10%;
-      left:80%;
 
-
-      width: 200px;
-      height:80px;
-      textAlign:center;
+        border-color: black;
+        height:400px;
+        text-align:center;
+        border: 1px solid black;
+        border-radius: 5px;
+        position:absolute;
+        top:100px;
+        right:0;
+    background-color:  #ffffcc;
+  }
+    th, td {
+      font-family: Arial;
+      font-size: 15pt;
+      background-color:  #ffffcc;
+      border: 1px solid black;
+      border-radius: 5px;
     }
+
+    div.logiran{
+      border-color: black;
+            height: 43px;
+             width:200px;
+            text-align:center;
+            border: 1px solid black;
+            border-radius: 5px;
+            position:absolute;
+            top:15%;
+            right:2%;
+    }
+
     </style>
   </head>
   <body>
-    <div id="div"  style="font-family:courier;"><button  style="font-family:courier;" type="submit" id="povratak">Povratak na početnu stranicu</button></div>
+    <div id="div" class="logiran"  style="font-family:courier;"><button  style="font-family:courier;" type="submit" id="povratak">Povratak na početnu stranicu</button></div>
     <h2 id="datum" style="font-family:courier;"></h2>
     <h2 id="vrijeme" style="font-family:courier;"></h2>
     <p style="font-family:courier;">Loto - svaki dan u 19h</p>
@@ -60,11 +81,11 @@
           var polje = data.proslost[i].datum.split('-');
           console.log(polje);
          var tr = $( "<tr></tr>" );
-         var igra =$( "<th></th>" ).css("border", "2px solid #CD5C5C").html( data.proslost[i].ime_igre );
-         var dobitna = $( "<td></td>" ).css("border", "2px solid #CD5C5C").html( data.proslost[i].pobjednik );
-         var td_datum = $( "<td></td>" ).css("border", "2px solid #CD5C5C").html(polje[2]+"."+polje[1]+"."+polje[0]+"." );
-         var td_vrijeme = $( "<td></td>" ).css("border", "2px solid #CD5C5C").html( data.proslost[i].vrijeme+ " sati");
-         var dobitnik = $( "<td></td>" ).css("border", "2px solid #CD5C5C").html(data.proslost[i].dobiveno);
+         var igra =$( "<th></th>" ).css("border", "2px solid #CD5C5C").css("font-family", "courier").html( data.proslost[i].ime_igre );
+         var dobitna = $( "<td></td>" ).css("border", "2px solid #CD5C5C").css("font-family", "courier").html( data.proslost[i].pobjednik );
+         var td_datum = $( "<td></td>" ).css("border", "2px solid #CD5C5C").css("font-family", "courier").html(polje[2]+"."+polje[1]+"."+polje[0]+"." );
+         var td_vrijeme = $( "<td></td>" ).css("border", "2px solid #CD5C5C").css("font-family", "courier").html( data.proslost[i].vrijeme+ " sati");
+         var dobitnik = $( "<td></td>" ).css("border", "2px solid #CD5C5C").css("font-family", "courier").html(data.proslost[i].dobiveno);
 
          tr.append(igra).append( dobitna ).append( td_datum ).append(td_vrijeme).append(dobitnik);
          $("#tablica2").append( tr );
@@ -84,7 +105,7 @@
       $("#vrijeme").html("Vrijeme: " + t.getHours() + "h " + t.getMinutes() + "min " + t.getSeconds()  + "s");
 
       //LOTO 7/49
-      if(t.getMinutes()===55 && t.getSeconds()===0 && t.getHours()===10)
+      if(t.getMinutes()===0 && t.getSeconds()===0 && t.getHours()===19)
       {
         var vrijeme = "19:00:00";
         var datum = t.getFullYear()+"-" +(t.getMonth()+1)+"-" +t.getDate();
@@ -105,30 +126,30 @@
               console.log( "Vratilo je " + JSON.stringify( data ) );
               var komb = data.dobitna_kombinacija.join();
               var tr = $( "<tr></tr>" );
-              var igra =$( "<th></th>" ).css("border", "1px solid red").html( "Loto 7/49 " );
-              var dobitna = $( "<td></td>" ).css("border", "1px solid red").html( " Kombinacija: " + komb );
-              var slovo = $( "<td></td>" ).css("border", "1px solid red").html( " Slovo: " + data.slovo );
-              var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
-              var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( vrijeme+ " sati");
+              var igra =$( "<th></th>" ).css("border", "1px solid red").css("font-family", "courier").html( "Loto 7/49 " );
+              var dobitna = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( " Kombinacija: " + komb );
+              var slovo = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( " Slovo: " + data.slovo );
+              var td_datum = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
+              var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( vrijeme+ " sati");
 
               tr.append(igra).append( dobitna ).append(slovo).append( td_datum ).append(td_vrijeme);
 
               if(data.ima===0)
               {
-                var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik nije izvučen! ");
+                var dobitnik = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Dobitnik nije izvučen! ");
                 tr.append(dobitnik);
               }
               if(data.ima===1)
               {
-                var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik je izvučen! ");
+                var dobitnik = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Dobitnik je izvučen! ");
                 if(data.slovo===1) //pogodeno je i slovo, dobije se više love!
                 {
 
-                  var supers = $( "<td></td>" ).css("border", "1px solid red").html(" Pogodeno je i slovo! ");
+                  var supers = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Pogodeno je i slovo! ");
                 }
                 if(data.slovo===0)
                 {
-                    var supers = $( "<td></td>" ).css("border", "1px solid red").html(" Slovo nije pogođeno! ");
+                    var supers = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Slovo nije pogođeno! ");
                 }
 
 
@@ -142,7 +163,7 @@
       }
 
       //BINGO
-      if(t.getDay()===1 && t.getMinutes()===55 && t.getSeconds()===0 && t.getHours()===10)
+      if(t.getDay()===5 && t.getMinutes()===0 && t.getSeconds()===0 && t.getHours()===19)
       {
         var vrijeme = "19:00:00";
         var datum = t.getFullYear()+"-" +(t.getMonth()+1)+"-" +t.getDate();
@@ -163,17 +184,17 @@
              console.log( "Vratilo je " + JSON.stringify( data ) );
              var komb = data.dobitna_kombinacija.join();
              var tr = $( "<tr></tr>" );
-             var igra =$( "<th></th>" ).css("border", "1px solid red").html( " Bingo " );
-             var dobitna = $( "<td></td>" ).css("border", "1px solid red").html( " Kombinacija: " + komb );
-             var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
-             var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( vrijeme+ " sati ");
+             var igra =$( "<th></th>" ).css("border", "1px solid red").css("font-family", "courier").html( " Bingo " );
+             var dobitna = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( " Kombinacija: " + komb );
+             var td_datum = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
+             var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( vrijeme+ " sati ");
              if(data.ima===0)
              {
-               var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik nije izvučen! ");
+               var dobitnik = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Dobitnik nije izvučen! ");
              }
              if(data.ima===1)
              {
-               var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik je izvučen! ");
+               var dobitnik = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Dobitnik je izvučen! ");
              }
              tr.append(igra).append( dobitna ).append( td_datum ).append(td_vrijeme).append(dobitnik);
              $("#tablicaa").append( tr );
@@ -182,7 +203,7 @@
       }
 
       //EUROJACKPOT
-      if(t.getDay()===1 && t.getMinutes()===55 && t.getSeconds()===0 && t.getHours()===10)
+      if(t.getDay()===0 && t.getMinutes()===0 && t.getSeconds()===0 && t.getHours()===19)
       {
         var vrijeme = "19:00:00";
         var datum = t.getFullYear()+"-" +(t.getMonth()+1)+"-" +t.getDate();
@@ -203,27 +224,27 @@
               var komb = data.dobitna_kombinacija.join();
               var dop= data.dopunski.join();
               var tr = $( "<tr></tr>" );
-              var igra =$( "<th></th>" ).css("border", "1px solid red").html( "Eurojackpot " );
-              var dobitna = $( "<td></td>" ).css("border", "1px solid red").html( " Kombinacija: " + komb);
-              var slovo = $( "<td></td>" ).css("border", "1px solid red").html( " Dopunski brojevi : " + dop);
-              var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
-              var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( vrijeme+ " sati");
+              var igra =$( "<th></th>" ).css("border", "1px solid red").css("font-family", "courier").html( "Eurojackpot " );
+              var dobitna = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( " Kombinacija: " + komb);
+              var slovo = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( " Dopunski brojevi : " + dop);
+              var td_datum = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
+              var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( vrijeme+ " sati");
 
               tr.append(igra).append( dobitna ).append(slovo).append( td_datum ).append(td_vrijeme);
 
               if(data.ima===0)
               {
-                var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik nije izvučen! ");
+                var dobitnik = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Dobitnik nije izvučen! ");
                 tr.append(dobitnik);
               }
               if(data.ima===1)
               {
-                  var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik je izvučen! ");
+                  var dobitnik = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Dobitnik je izvučen! ");
                   tr.append(dobitnik);
 
                 if(data.i_dop===1) //pogodeno je i slovo, dobije se više love!
                 {
-                  var supers = $( "<td></td>" ).css("border", "1px solid red").html(" Pogodeni su i dopunski brojevi! ");
+                  var supers = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Pogodeni su i dopunski brojevi! ");
                   tr.append(supers);
                 }
                 else
@@ -241,7 +262,7 @@
 
 
       //KLAĐENJE NA KONJA
-      if(t.getMinutes()===55 && t.getSeconds()===0 && (t.getHours()===10 || t.getHours()===23 ||t.getHours()===8))
+      if(t.getMinutes()===0 && t.getSeconds()===0 && (t.getHours()===11 || t.getHours()===12 ||t.getHours()===13))
       {
         var vrijeme = "11:00:00";
         var datum = t.getFullYear()+"-" +(t.getMonth()+1)+"-" +t.getDate();
@@ -261,19 +282,19 @@
            {
                console.log( "Vratilo je " + JSON.stringify( data ) );
                var tr = $( "<tr></tr>" );
-               var igra =$( "<th></th>" ).css("border", "1px solid red").html( " Kladionica konja " );
-               var td_ime_konja = $( "<td></td>" ).css("border", "1px solid red").html( data.pobjednik[0].ime );
-               var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
-               var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( vrijeme + " sati ");
+               var igra =$( "<th></th>" ).css("border", "1px solid red").css("font-family", "courier").html( " Kladionica konja " );
+               var td_ime_konja = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( data.pobjednik[0].ime );
+               var td_datum = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
+               var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html( vrijeme + " sati ");
               tr.append(igra).append( td_ime_konja ).append( td_datum ).append(td_vrijeme);
 
                if(data.ima===1)
                {
-                 var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik je izvučen! ");
+                 var dobitnik = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Dobitnik je izvučen! ");
                }
                if(data.ima===0)
                {
-                 var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik nije izvučen! ");
+                 var dobitnik = $( "<td></td>" ).css("border", "1px solid red").css("font-family", "courier").html(" Dobitnik nije izvučen! ");
                }
                tr.append(dobitnik);
                $("#tablicaa").append( tr );
