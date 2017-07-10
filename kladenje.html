@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>
+    </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+        <style>
+          div{
+            position:absolute;
+            align:center;
+            top: 10%;
+            left:80%;
+            border:1px solid black;
+            borderRadius:5px;
+            width: 200px;
+            height:80px;
+            textAlign:center;
+          }
+            th, td {font-family: Arial; font-size: 15pt;}
+
+        </style>
+  </head>
+  <body>
+    <h1 style="font-family:courier;">Klađenje na konje</h1>
+
+    <h2 style="font-family:courier;">Pogledajte popis pobjednika u proteklim utrkama <button type="submit" id="popis">Pogledaj</button></h2>
+    <h2 style="font-family:courier;">Pogledajte utrke u tijeku i okladite se na jednog konja <button type="submit" id="okladi">Pogledaj</button></h2>
+    <p id="preostalo" style="font-family:courier;"></p>
+    <div id="div" style="font-family:courier;"><button  style="font-family:courier;"type="submit" id="pocetna">Povratak na početnu stranicu</button></div>
+  </br>
+  <table id="tablica" style="font-family:courier;"></table>
+    <script>
+    var korisnik;
+    $(document).ready(function()
+  {
+
+    $.ajax(   //za dohvaćanje korisnika iz sessiona
+     {
+       url:"kladenje_obrada.php",
+       data:
+       {
+         login: "a"
+       },
+       type:"GET",
+       dataType:"json",
+       success: function(data)
+       {
+           console.log( "Vratilo je " + JSON.stringify( data ) );
+           /*
+           if(data.korisnik!=="" || data.korisnik===null)
+           {
+           */
+             console.log("Nije prazan " + data.korisnik);
+             korisnik=data.korisnik;
+             var p = $("<p></p>").html("Korisnik: " +data.korisnik);
+             //var gumb= $("<input>").attr("type", "button").attr("id", "logout").css({position:"absolute", align:"center", top:"90%", left:"30%"}).val("Logout");
+
+             $("#div").append(p);
+            // $("#div").append(gumb);
+             $("body").append(div);
+             console.log("sada imamo " +data.korisnik);
+             /*
+             $("#logout").on("click", function()
+           {
+             alert("Preusmjerit ćemo Vas na naslovnu stranicu.");
+             window.location = "index.php";
+             $.ajax(   //za dohvaćanje korisnika iz sessiona
+              {
+                url:"kladenje_obrada.php",
+                data:
+                {
+                  login: "b"
+                },
+                type:"GET",
+                dataType:"json",
+                success: function(data)
+                {
+
+                  korisnik=data.korisnik;
+                  console.log("nakon odlogiranja imamo " +data.korisnik);
+                }
+
+           });
+
+         });
+*/
+          // }
+           /*
+           else
+           {
+             console.log("Prazan je");
+             var gumb1= $("<input>").attr("type", "button").attr("id", "ulogiraj_se").css({position:"absolute",align:"center", backgroundColor:"green", height:"40px", top:"60%", left:"30%"}).val("Ulogiraj se!");
+             //var gumb2= $("<input>").attr("type", "button").attr("id", "pocetna").css({position:"absolute",align:"center", backgroundColor:"yellow", height:"40px",top:"50%", left:"10%"}).val("Povratak na početnu!");
+             $("#div").append(gumb1);
+             //$("#div").append(gumb2);
+             $("body").append(div);
+              $("#ulogiraj_se").on("click", function()
+              {
+                window.location = "index.php";
+
+              });
+
+           }
+           */
+
+     }
+     });
+
+     $("#popis").on("click", function()
+     {
+       $.ajax(   //za dohvaćanje korisnika iz sessiona
+        {
+          url:"kladenje_obrada.php",
+          data:
+          {
+            popis: "postavljen"
+          },
+          type:"GET",
+          dataType:"json",
+          success: function(data)
+          {
+
+               console.log( "Vratilo je " + JSON.stringify( data ) );
+                 $("#tablica").empty();
+                 var tr = $( "<tr></tr>" );
+                 var td1=$( "<th></th>" ).css("border", "2px solid red").html("Pobjednički konj");
+                 var td2=$( "<th></th>" ).css("border", "2px solid red").html("Datum pobjede");
+                 var td3=$( "<th></th>" ).css("border", "2px solid red").html("Vrijeme pobjede");
+                 tr.append(td1).append(td2).append(td3);
+                 $("#tablica").append( tr );
+
+                 for( var i = 0; i < data.pobjednici.length; ++i )
+               	{
+                 		var tr = $( "<tr></tr>" );
+                 		var td_ime_konja = $( "<td></td>" ).css("border", "1px solid red").html( data.pobjednici[i].ime_konja );
+                    var date = new Date(data.pobjednici[i].datum); //Get the current date
+                  var date2 = date.getDate() +"."+ date.getMonth() +"."  +  date.getFullYear() +".";
+                 		var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( date2 );
+                    var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( data.pobjednici[i].vrijeme+ " sati");
+
+                 		tr.append( td_ime_konja ).append( td_datum ).append(td_vrijeme);
+                 		$("#tablica").append( tr );
+
+
+               	}
+          }
+
+     });
+     });
+
+     $("#pocetna").on("click", function()
+     {
+       window.location = "index.php";
+
+     });
+    $("#okladi").on("click", function()
+    {
+
+
+        $("#preostalo").empty();
+        $("#tablica").empty();
+        function povecaj()
+        {
+          var t = new Date();
+          var vrijeme;
+          var h = t.getHours();
+
+          if(h>=0 && h<11)
+          {
+            var s= "Trenutno je: "+t.getHours()+":"+t.getMinutes()+":" +t.getSeconds()+", a iduća utrka je danas u 11:00:00 sati.";
+          }
+          if(h>=11 && h<12)
+          {
+            var s= "Trenutno je: "+t.getHours()+":"+t.getMinutes()+":" +t.getSeconds()+", a iduća utrka je danas u 12:00:00 sati.";
+          }
+          if(h>=12 && h<13)
+          {
+            var s= "Trenutno je: "+t.getHours()+":"+t.getMinutes()+":" +t.getSeconds()+", a iduća utrka je danas u 13:00:00 sati.";
+          }
+          if(h>=13)
+          {
+            var s= "Trenutno je: "+t.getHours()+":"+t.getMinutes()+":" +t.getSeconds()+", a iduća utrka je sutra u 11:00:00 sati.";
+          }
+            $("#preostalo").css({textAlign:"center",position:"relative", border:"3px solid red", fontSize:"25px"}).html(s);
+
+
+        }
+
+
+
+
+          setInterval(povecaj,1000);
+
+       $.ajax(
+        {
+          url:"kladenje_obrada.php",
+          data:
+          {
+            vrijeme: "13:00:00"
+          },
+          type:"GET",
+          dataType:"json",
+          success: function(data)
+          {
+            console.log( "Vratilo je " + JSON.stringify( data ) );
+
+            for( var i = 0; i < data.utrka.length; ++i )
+          	{
+            		var tr = $( "<tr></tr>" );
+            		var td_ime = $( "<td></td>" ).html( data.utrka[i].ime );
+            		var td_koeficijent = $( "<td></td>" ).html( data.utrka[i].koeficijent );
+            		var gumb= $("<input type='radio'>").attr("name", "radio").attr("id",data.utrka[i].id );
+
+            		tr.append( td_ime ).append( td_koeficijent ).append( gumb );
+            		$("#tablica").append( tr );
+
+
+          	}
+
+            var s="Unesite iznos koji želite uplatiti: ";
+            var unos =$("<input type='text'/>").attr("id", "unos");
+            var potvrda = $("<input type='submit'>").attr("id", "potvrda").html("Potvrdi");
+            $("#tablica").append("</br>").append(s).append(unos).append(potvrda);
+
+
+            $("#potvrda").on("click", function()
+          {
+
+            /*if(korisnik)
+            {
+                console.log("KORISNIK " +korisnik);
+              console.log("Korisnik je definiran" + korisnik);
+              */
+            var re=/^([1-9][0-9]*)$/;
+            var ret=/^([0-9][0-9]*)$/;
+            if(re.test($("#unos").val()))
+            {
+
+              $.ajax(
+               {
+                 url:"kladenje_obrada.php",
+                 data:
+                 {
+                   novac: $("#unos").val(),
+                   id_konja:$('input[name=radio]:checked').attr("id")
+                 },
+                 type:"GET",
+                 dataType:"json",
+                 success: function(data)
+                 {
+                   if(data.nema_iznosa===0)
+                   {
+                     console.log( "Vratilo je " + JSON.stringify( data ) );
+
+                     alert("Uplata je izvršena! \n Korisnik:"+ data.korisnik +" \n Mogući dobitak:"+ data.dobitak +" kuna.\n Broj listića je:" +data.listic +" \n Na računu još imate: "+data.ostatak+" \n PRATITE IZVLAČENJE!");
+                   }
+                  if(data.nema_iznosa===1)
+                  {
+                    alert("Nemate dovoljno novaca na računu!");
+                  }
+
+                 },
+                 error: function( xhr, status )
+             		{
+             			console.log( status );
+             		}
+               });
+
+
+            }
+            else alert("Niste unijeli sve podatke!")
+          /*}
+
+          else
+             {
+                var gumb1= $("<input>").attr("type", "button").attr("id", "ulogiraj_se").css({position:"absolute",align:"center", backgroundColor:"green", height:"40px", top:"0%", left:"30%"}).val("Ulogiraj se!");
+                 $("#div").append(gumb1);
+               console.log("Korisnik nije definiran");
+              alert("Molimo, ulogirajte se kako biste mogli igrati.");
+            }
+            */
+
+
+
+          // var gumb2= $("<input>").attr("type", "button").attr("id", "pocetna").css({position:"absolute",align:"center", backgroundColor:"yellow", height:"40px",top:"50%", left:"10%"}).val("Povratak na početnu!");
+
+           //$("#div").append(gumb2);
+           $("body").append(div);
+           /*
+            $("#ulogiraj_se").on("click", function()
+            {
+
+              window.location = "index.php";
+
+            });
+            */
+            $("#pocetna").on("click", function()
+            {
+
+              window.location = "index.php";
+
+            });
+
+
+          });
+
+          },
+          error: function( xhr, status )
+      		{
+      			console.log( status );
+      		}
+
+});
+    });
+  });
+    </script>
+  </body>
+</html>

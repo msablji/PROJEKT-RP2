@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <style>
+    div{
+      position:absolute;
+      align:center;
+      top: 10%;
+      left:80%;
+
+
+      width: 200px;
+      height:80px;
+      textAlign:center;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="div"  style="font-family:courier;"><button  style="font-family:courier;" type="submit" id="povratak">Povratak na početnu stranicu</button></div>
+    <h2 id="datum" style="font-family:courier;"></h2>
+    <h2 id="vrijeme" style="font-family:courier;"></h2>
+    <p style="font-family:courier;">Loto - svaki dan u 19h</p>
+    <p style="font-family:courier;">Bingo - četvrtkom u 19h</p>
+    <p style="font-family:courier;">Eurojackpot - nedjeljom u 19h</p>
+    <p style="font-family:courier;">Kladionica konja - svaki dan u 11h, 12h i 13h</p>
+    <table id="tablicaa" style="font-family:courier;"></table>
+    <h2 style="font-family:courier;">Prethodna izvlačenja:</h2>
+    <table id="tablica2" style="font-family:courier;">
+    <tr>
+    <th> Igra </th>
+    <th> Dobitna kombinacija / Konj pobjednik </th>
+    <th> Datum </th>
+    <th> Vrijeme </th>
+    <th> Rezultat izvlačenja </th>
+    </tr>
+  </table>
+    <script>
+    $("#document").ready(function()
+  {
+    var mj = ["siječnja", "veljače", "ožujka", "travnja", "svibnja", "lipnja", "srpnja", "kolovoza", "rujna", "listopada", "studenog", "prosinca"];
+    var dani = ["nedjelja", "ponedjeljak","utorak", "srijeda", "četvrtak", "petak", "subota"];
+
+    $.ajax(
+     {
+       url:"admin_obrada.php",
+       data:
+       {
+         obrada:"obrada"
+       },
+       type:"GET",
+       dataType:"json",
+       success: function(data)
+       {
+         console.log( "Vratilo je " + JSON.stringify( data ) );
+         for( var i = 0; i < data.proslost.length; ++i )
+        {
+          var polje = data.proslost[i].datum.split('-');
+          console.log(polje);
+         var tr = $( "<tr></tr>" );
+         var igra =$( "<th></th>" ).css("border", "2px solid #CD5C5C").html( data.proslost[i].ime_igre );
+         var dobitna = $( "<td></td>" ).css("border", "2px solid #CD5C5C").html( data.proslost[i].pobjednik );
+         var td_datum = $( "<td></td>" ).css("border", "2px solid #CD5C5C").html(polje[2]+"."+polje[1]+"."+polje[0]+"." );
+         var td_vrijeme = $( "<td></td>" ).css("border", "2px solid #CD5C5C").html( data.proslost[i].vrijeme+ " sati");
+         var dobitnik = $( "<td></td>" ).css("border", "2px solid #CD5C5C").html(data.proslost[i].dobiveno);
+
+         tr.append(igra).append( dobitna ).append( td_datum ).append(td_vrijeme).append(dobitnik);
+         $("#tablica2").append( tr );
+
+       }
+     }
+     });
+
+
+    function povecaj()
+    {
+      var t = new Date();
+      $("#datum").empty();
+      $("#vrijeme").empty();
+
+      $("#datum").html("Današnji datum: " + t.getDate() + ". " + mj[t.getMonth()] + " " + t.getFullYear() + "  --  " +dani[t.getDay()]);
+      $("#vrijeme").html("Vrijeme: " + t.getHours() + "h " + t.getMinutes() + "min " + t.getSeconds()  + "s");
+
+      //LOTO 7/49
+      if(t.getMinutes()===55 && t.getSeconds()===0 && t.getHours()===10)
+      {
+        var vrijeme = "19:00:00";
+        var datum = t.getFullYear()+"-" +(t.getMonth()+1)+"-" +t.getDate();
+        var polje = datum.split('-');
+        console.log(polje);
+        $.ajax(
+         {
+           url:"admin_obrada.php",
+           data:
+           {
+             vrijeme_0:vrijeme,
+             datum: datum
+           },
+           type:"GET",
+           dataType:"json",
+           success: function(data)
+           {
+              console.log( "Vratilo je " + JSON.stringify( data ) );
+              var komb = data.dobitna_kombinacija.join();
+              var tr = $( "<tr></tr>" );
+              var igra =$( "<th></th>" ).css("border", "1px solid red").html( "Loto 7/49 " );
+              var dobitna = $( "<td></td>" ).css("border", "1px solid red").html( " Kombinacija: " + komb );
+              var slovo = $( "<td></td>" ).css("border", "1px solid red").html( " Slovo: " + data.slovo );
+              var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
+              var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( vrijeme+ " sati");
+
+              tr.append(igra).append( dobitna ).append(slovo).append( td_datum ).append(td_vrijeme);
+
+              if(data.ima===0)
+              {
+                var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik nije izvučen! ");
+                tr.append(dobitnik);
+              }
+              if(data.ima===1)
+              {
+                var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik je izvučen! ");
+                if(data.slovo===1) //pogodeno je i slovo, dobije se više love!
+                {
+
+                  var supers = $( "<td></td>" ).css("border", "1px solid red").html(" Pogodeno je i slovo! ");
+                }
+                if(data.slovo===0)
+                {
+                    var supers = $( "<td></td>" ).css("border", "1px solid red").html(" Slovo nije pogođeno! ");
+                }
+
+
+                tr.append(dobitnik).append(supers);
+
+                }
+                $("#tablicaa").append( tr );
+              }
+
+         });
+      }
+
+      //BINGO
+      if(t.getDay()===1 && t.getMinutes()===55 && t.getSeconds()===0 && t.getHours()===10)
+      {
+        var vrijeme = "19:00:00";
+        var datum = t.getFullYear()+"-" +(t.getMonth()+1)+"-" +t.getDate();
+        var polje = datum.split('-');
+        console.log(polje);
+        $.ajax(
+         {
+           url:"admin_obrada.php",
+           data:
+           {
+             vrijeme_2:vrijeme,
+             datum: datum
+           },
+           type:"GET",
+           dataType:"json",
+           success: function(data)
+           {
+             console.log( "Vratilo je " + JSON.stringify( data ) );
+             var komb = data.dobitna_kombinacija.join();
+             var tr = $( "<tr></tr>" );
+             var igra =$( "<th></th>" ).css("border", "1px solid red").html( " Bingo " );
+             var dobitna = $( "<td></td>" ).css("border", "1px solid red").html( " Kombinacija: " + komb );
+             var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
+             var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( vrijeme+ " sati ");
+             if(data.ima===0)
+             {
+               var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik nije izvučen! ");
+             }
+             if(data.ima===1)
+             {
+               var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik je izvučen! ");
+             }
+             tr.append(igra).append( dobitna ).append( td_datum ).append(td_vrijeme).append(dobitnik);
+             $("#tablicaa").append( tr );
+           }
+         });
+      }
+
+      //EUROJACKPOT
+      if(t.getDay()===1 && t.getMinutes()===55 && t.getSeconds()===0 && t.getHours()===10)
+      {
+        var vrijeme = "19:00:00";
+        var datum = t.getFullYear()+"-" +(t.getMonth()+1)+"-" +t.getDate();
+          var polje = datum.split('-');
+        $.ajax(
+         {
+           url:"admin_obrada.php",
+           data:
+           {
+             vrijeme_3:vrijeme,
+             datum: datum
+           },
+           type:"GET",
+           dataType:"json",
+           success: function(data)
+           {
+              console.log( "Vratilo je " + JSON.stringify( data ) );
+              var komb = data.dobitna_kombinacija.join();
+              var dop= data.dopunski.join();
+              var tr = $( "<tr></tr>" );
+              var igra =$( "<th></th>" ).css("border", "1px solid red").html( "Eurojackpot " );
+              var dobitna = $( "<td></td>" ).css("border", "1px solid red").html( " Kombinacija: " + komb);
+              var slovo = $( "<td></td>" ).css("border", "1px solid red").html( " Dopunski brojevi : " + dop);
+              var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
+              var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( vrijeme+ " sati");
+
+              tr.append(igra).append( dobitna ).append(slovo).append( td_datum ).append(td_vrijeme);
+
+              if(data.ima===0)
+              {
+                var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik nije izvučen! ");
+                tr.append(dobitnik);
+              }
+              if(data.ima===1)
+              {
+                  var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik je izvučen! ");
+                  tr.append(dobitnik);
+
+                if(data.i_dop===1) //pogodeno je i slovo, dobije se više love!
+                {
+                  var supers = $( "<td></td>" ).css("border", "1px solid red").html(" Pogodeni su i dopunski brojevi! ");
+                  tr.append(supers);
+                }
+                else
+                {
+                  var supers = $( "<td></td>" ).css("border", "1px solid red").html(" Dopunski brojevi nisu pogođeni! ");
+                  tr.append(supers);
+                }
+
+              }
+                $("#tablicaa").append( tr );
+              }
+
+         });
+      }
+
+
+      //KLAĐENJE NA KONJA
+      if(t.getMinutes()===55 && t.getSeconds()===0 && (t.getHours()===10 || t.getHours()===23 ||t.getHours()===8))
+      {
+        var vrijeme = "11:00:00";
+        var datum = t.getFullYear()+"-" +(t.getMonth()+1)+"-" +t.getDate();
+        var polje = datum.split('-');
+        console.log(polje);
+        $.ajax(
+         {
+           url:"admin_obrada.php",
+           data:
+           {
+             vrijeme_4:vrijeme,
+             datum: datum
+           },
+           type:"GET",
+           dataType:"json",
+           success: function(data)
+           {
+               console.log( "Vratilo je " + JSON.stringify( data ) );
+               var tr = $( "<tr></tr>" );
+               var igra =$( "<th></th>" ).css("border", "1px solid red").html( " Kladionica konja " );
+               var td_ime_konja = $( "<td></td>" ).css("border", "1px solid red").html( data.pobjednik[0].ime );
+               var td_datum = $( "<td></td>" ).css("border", "1px solid red").html( polje[2]+"."+polje[1]+"."+polje[0]+"." );
+               var td_vrijeme = $( "<td></td>" ).css("border", "1px solid red").html( vrijeme + " sati ");
+              tr.append(igra).append( td_ime_konja ).append( td_datum ).append(td_vrijeme);
+
+               if(data.ima===1)
+               {
+                 var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik je izvučen! ");
+               }
+               if(data.ima===0)
+               {
+                 var dobitnik = $( "<td></td>" ).css("border", "1px solid red").html(" Dobitnik nije izvučen! ");
+               }
+               tr.append(dobitnik);
+               $("#tablicaa").append( tr );
+           }
+         });
+      }
+    }
+    setInterval(povecaj,1000);
+
+
+    $("#povratak").on("click", function()
+  {
+    window.location = "index.php";
+  });
+
+
+  });
+    </script>
+  </body>
+</html>
