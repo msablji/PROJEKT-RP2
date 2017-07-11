@@ -94,16 +94,18 @@ if(isset($_POST['bingo']))
 $st = $db->prepare( 'SELECT * from Bingo');
 $st->execute();
 while( $row = $st->fetch() )
-{
-	if($row['nadimak']===$_SESSION['korisnik'])
-	{
-	echo '<tr><td>'."Bingo:".'</td><td > '.$row['brojevi']; if($row['izvucen']!=0) echo '  </td><td>'."DOBITAN!".'</td></tr>';
-		 else echo '  </td><td>  '." Nije".'</td></tr>';
-    }
-
+{ 
+	if($row['nadimak']===$_SESSION['korisnik']) 
+	{ 
+	echo '<tr><td>'."Bingo:".'</td><td > '.$row['brojevi'].'</td><td>'." kontrolni broj:".$row['kontr_broj']; 
+	if($row['izvucen']!=0) echo '  </td><td>'."&#10004".'</td></tr>';
+    else if($row['proslost']==1)echo '  </td><td>  '."&#10006".'</td></tr>'; 
+	else  echo '  </td><td>  '." &#9995".'</td></tr>'; 
+    } 
+	
 }
 ?>	</table></article><?php
-
+	
 }
 if(isset($_POST['loto']))
 {
@@ -114,16 +116,19 @@ if(isset($_POST['loto']))
 $st = $db->prepare( 'SELECT * from Loto');
 $st->execute();
 while( $row = $st->fetch() )
-{
-	if($row['korisnicko_ime']===$_SESSION['korisnik'])
-	{
-	echo '<tr><td>'."Loto:".'</td><td class="br"> '.$row['kombinacija'] .' </td><td>'.$row['slovo']; if($row['dobitan']!=0) echo '  </td><td>'."DOBITAN!".'</td></tr>';
-		 else echo '  </td><td>  '." Nije".'</td></tr>';
-    }
-
+{ 
+	if($row['korisnicko_ime']===$_SESSION['korisnik']) 
+	{ 
+	echo '<tr><td>'."Loto:".'</td><td class="br"> '.$row['kombinacija'] .' </td><td>'.$row['slovo'].'</td><td>'." kontrolni broj:".$row['id'];  
+	if($row['dobitan']!=0) echo '  </td><td>'."&#10004".'</td></tr>';
+    else if($row['proslo']==1)echo '  </td><td>  '."&#10006".'</td></tr>'; 
+	else  echo '  </td><td>  '." &#9995".'</td></tr>'; 
+		 
+    } 
+	
 }
 ?>	</table></article><?php
-
+	
 }
 if(isset($_POST['euro']))
 {
@@ -134,16 +139,18 @@ if(isset($_POST['euro']))
 $st = $db->prepare( 'SELECT * from Euro');
 $st->execute();
 while( $row = $st->fetch() )
-{
-	if($row['korisnicko_ime']===$_SESSION['korisnik'])
-	{
-	echo '<tr><td>'."Eurojack:".'</td><td class="br"> '.$row['kombinacija'] .' </td><td>'.$row['dopunski']; if($row['dobitan']!=0) echo '  </td><td>'."DOBITAN!".'</td></tr>';
-		 else echo '  </td><td>  '." Nije".'</td></tr>';
-    }
-
+{ 
+	if($row['korisnicko_ime']===$_SESSION['korisnik']) 
+	{ 
+	echo '<tr><td>'."Eurojack:".'</td><td class="br"> '.$row['kombinacija'] .' </td><td>'.$row['dopunski'].'</td><td>'." kontrolni broj:".$row['id'];  
+	if($row['dobitan']!=0) echo '  </td><td>'."&#10004".'</td></tr>';
+    else if($row['proslo']==1)echo '  </td><td>  '."&#10006".'</td></tr>'; 
+	else  echo '  </td><td>  '." &#9995".'</td></tr>'; 
+    } 
+	
 }
 ?>	</table></article><?php
-
+	
 }
 if(isset($_POST['klad']))
 {
@@ -154,16 +161,18 @@ if(isset($_POST['klad']))
 $st = $db->prepare( 'SELECT * from Kladionica');
 $st->execute();
 while( $row = $st->fetch() )
-{
-	if($row['nadimak']===$_SESSION['korisnik'])
-	{
-	echo '<tr><td>'."Klađenje:".'</td><td class="br"> '.$row['konj'] .' </td><td>'."Mogući dobitak:".$row['dobitak']; if($row['dobio']!=0) echo '  </td><td>'."DOBITAN!".'</td></tr>';
-		 else echo '  </td><td>  '." Nije".'</td></tr>';
-    }
-
+{ 
+	if($row['nadimak']===$_SESSION['korisnik']) 
+	{ 
+	echo '<tr><td>'."Klađenje:".'</td><td class="br"> '.$row['konj'] .' </td><td>'."Mogući dobitak:".$row['dobitak'].'</td><td>'." kontrolni broj:".$row['listic']; 
+	if($row['dobio']!=0) echo '  </td><td>'."&#10004".'</td></tr>';
+    else if($row['proslo']==1)echo '  </td><td>  '."&#10006".'</td></tr>'; 
+	else  echo '  </td><td>  '." &#9995".'</td></tr>'; 
+    } 
+	
 }
 ?>	</table></article><?php
-
+	
 }
 if(isset($_POST['izadi']))
 {

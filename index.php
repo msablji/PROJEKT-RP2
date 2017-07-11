@@ -1,4 +1,4 @@
-<?php
+ne<?php
 require_once 'lutrija_db.php';
 
 $status = session_status();
@@ -439,7 +439,7 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
 
   if($valjan===0)
   {
-    echo '<script type="text/javascript">alert("Listić s tim kontrolnim brojem ne postoji!");</script>';
+    echo '<script type="text/javascript">alert("Listić s tim kontrolnim brojem ne postoji ili se nije odigrala Vaša igra! Unesite broj listića nakon izvačenja!");</script>';
   }
 }
 
