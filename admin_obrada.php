@@ -88,19 +88,21 @@ if(isset($_GET['vrijeme_0']) && $_GET['datum'])
 	$message['ima']=0;
 	$message['i_slovo']='';
 	$message['slovo']='';
+	$message['razlika']=[];
+	$polu_dobitak=0;
 	$nadimak='';
 		$kontr_broj;
 		$brojevi;
 		$niz;
-		$ima='';
+		$ima='0';
 		$ima_slovo='';
 
-  for($i=0; $i<7; $i++)
-  {
-    $brojevi[$i]=rand(1,49);
-    shuffle($brojevi);
-  }
+		$brojevi = range(1, 49);
+		shuffle($brojevi );
+		$brojevi = array_slice($brojevi ,0,7);
+	sort($brojevi);
   $message['dobitna_kombinacija'] = $brojevi;
+
 
 	$str = 'AB';
 $slovo = $str[rand(0, strlen($str)-1)];
@@ -118,29 +120,96 @@ foreach ($st->fetchAll() as $row)
 {
 	$niz=explode(" ",$row['kombinacija']);
 	$razlika = array_diff($brojevi, $niz);
+	$message['razlika']=$razlika;
 
-	if($razlika===null)
+	if($razlika===null)  //ako imamo poklapanje svih 7 brojeva
 	{
 		if($row['slovo']===$slovo)
 		{
 			$message['i_slovo']='11';
 			$ima='11';
+			$polu_dobitak=7;  //svih 7 je pogođeno
 		}
 		else {
 			$message['i_slovo']='10';
 			$ima='10';
+			$polu_dobitak=0;  //svih 7 je pogođeno
 		}
-		$message[ 'dobitni_listic' ][] = array( 'korisnicko_ime' => $row['korisnicko_ime'], 'id' => $row['id'], 'kombinacija' => $row['kombinacija'], 'slovo' =>$slovo );
+
+		$message[ 'dobitni_listic' ][] = array( 'korisnicko_ime' => $row['korisnicko_ime'], 'id' => $row['id'], 'kombinacija' => $row['kombinacija'], 'slovo' =>$slovo, 'polu_dobitak' =>$polu_dobitak);
 		$message['ima']=1;
 		$nadimak = $row['korisnicko_ime'];
 		$id = $row['id'];
 		$kombinacija=$row['kombinacija'] ;
 
 	}
+	if(sizeof($razlika)===1)  //6 brojeva je pogođeno
+	{
+		if($row['slovo']===$slovo)
+		{
+			$message['i_slovo']='11';
+			$ima='11';
+			$polu_dobitak= 6; //6 je pogođeno
+		}
+		else {
+			$message['i_slovo']='10';
+			$ima='10';
+			$polu_dobitak= 0; //6 je pogođeno
+		}
+
+		$message[ 'dobitni_listic' ][] = array( 'korisnicko_ime' => $row['korisnicko_ime'], 'id' => $row['id'], 'kombinacija' => $row['kombinacija'], 'slovo' =>$slovo, 'polu_dobitak' =>$polu_dobitak);
+		$message['ima']=1;
+		$nadimak = $row['korisnicko_ime'];
+		$id = $row['id'];
+		$kombinacija=$row['kombinacija'] ;
+	}
+
+	if(sizeof($razlika)===2)  //5 brojeva je pogođeno
+	{
+		if($row['slovo']===$slovo)
+		{
+			$message['i_slovo']='11';
+			$ima='11';
+			$polu_dobitak= 5; //6 je pogođeno
+		}
+		else {
+			$message['i_slovo']='10';
+			$ima='10';
+			$polu_dobitak= 0; //5 je pogođeno
+		}
+
+		$message[ 'dobitni_listic' ][] = array( 'korisnicko_ime' => $row['korisnicko_ime'], 'id' => $row['id'], 'kombinacija' => $row['kombinacija'], 'slovo' =>$slovo, 'polu_dobitak' =>$polu_dobitak );
+		$message['ima']=1;
+		$nadimak = $row['korisnicko_ime'];
+		$id = $row['id'];
+		$kombinacija=$row['kombinacija'] ;
+	}
+	if(sizeof($razlika)===3)  //4 broja je pogođeno
+	{
+		if($row['slovo']===$slovo)
+		{
+			$message['i_slovo']='11';
+			$ima='11';
+			$polu_dobitak= 4; //5 je pogođeno
+		}
+		else {
+			$message['i_slovo']='10';
+			$ima='10';
+			$polu_dobitak= 0; //5 je pogođeno
+		}
+
+		$message[ 'dobitni_listic' ][] = array( 'korisnicko_ime' => $row['korisnicko_ime'], 'id' => $row['id'], 'kombinacija' => $row['kombinacija'], 'slovo' =>$slovo, 'polu_dobitak' =>$polu_dobitak );
+		$message['ima']=1;
+		$nadimak = $row['korisnicko_ime'];
+		$id = $row['id'];
+		$kombinacija=$row['kombinacija'] ;
+	}
+
 	else {
 	$message['ima']=0;
 	$ima='0';
 	$message['slovo']=$slovo;
+	$polu_dobitak= 0; //nema nikakvog dobitka
 	}
 
 
@@ -160,12 +229,33 @@ $st= $db->exec("INSERT INTO Proslost (ime_igre, pobjednik, datum, vrijeme, dobiv
 	if($ima==='11')  //ako ima slovo i brojeve, onda je 11
 	{
 		$st = $db->exec(  "UPDATE Loto SET dobitan = '11' WHERE korisnicko_ime = '".$nadimak."' " );
+
+		if($polu_dobitak==='7')
+		{
+				$st = $db->exec(  "UPDATE Loto SET poludobitak = '7' WHERE korisnicko_ime = '".$nadimak."' " );
+		}
+		if($polu_dobitak==='6')
+		{
+				$st = $db->exec(  "UPDATE Loto SET poludobitak = '6' WHERE korisnicko_ime = '".$nadimak."' " );
+		}
+		if($polu_dobitak==='5')
+		{
+				$st = $db->exec(  "UPDATE Loto SET poludobitak = '5' WHERE korisnicko_ime = '".$nadimak."' " );
+		}
+		if($polu_dobitak==='4')
+		{
+				$st = $db->exec(  "UPDATE Loto SET poludobitak = '4' WHERE korisnicko_ime = '".$nadimak."' " );
+		}
 	}
+
 	if($ima==='10') // ako ima slovo ali nema brojeve, onda je 10
 	{
 		$st = $db->exec(  "UPDATE Loto SET dobitan = '10' WHERE korisnicko_ime = '".$nadimak."' " );
+		$st = $db->exec(  "UPDATE Loto SET poludobitak = '0' WHERE korisnicko_ime = '".$nadimak."' " );
 
 	}
+
+
 
 
 
@@ -189,13 +279,12 @@ if(isset($_GET['vrijeme_2']))
 		$brojevi;
 		$niz='';
 
-
-  for($i=0; $i<15; $i++)
-  {
-    $brojevi[$i]=rand(1,50);
-    shuffle($brojevi);
-  }
+		$brojevi = range(1, 50);
+		shuffle($brojevi );
+		$brojevi = array_slice($brojevi ,0,15);
+	sort($brojevi);
   $message['dobitna_kombinacija'] = $brojevi;
+
 	$ima=0;
 	$db=DB::getConnection();
   try
@@ -260,19 +349,21 @@ if(isset($_GET['vrijeme_3']) && isset($_GET['datum']))
 	$niz1='';
 	$niz2='';
 	$ima='';
+	$message['razlika']=[];
+	$polu_dobitak=0;
 
-	for($i=0; $i<5; $i++)
-	{
-		$brojevi[$i]=rand(1,50);
-		shuffle($brojevi);
-	}
-	  $message['dobitna_kombinacija'] = $brojevi;
-	for($i=0; $i<2; $i++)
-	{
-		$dopunski[$i]=rand(1,10);
-		shuffle($brojevi);
-	}
+	$brojevi = range(1, 50);
+	shuffle($brojevi );
+	$brojevi = array_slice($brojevi ,0,5);
+	sort($brojevi);
+	$message['dobitna_kombinacija'] = $brojevi;
+
+	$dopunski = range(1, 10);
+	shuffle($dopunski );
+	$dopunski = array_slice($dopunski ,0,2);
+	sort($dopunski);
 	$message['dopunski'] = $dopunski;
+
 
 	$db=DB::getConnection();
   try
@@ -291,22 +382,38 @@ if(isset($_GET['vrijeme_3']) && isset($_GET['datum']))
 		$razlika1 = array_diff($brojevi, $niz1);
 		$razlika2 =array_diff($dopunski, $niz2);
 
-
-
 		if($razlika1===null)
 		{
-			if($razlika2===null)
+			if($razlika2===null)  //pogođeni su i dopunski i kombinacija
 			{
 				$message['i_dop']='11';
 				$ima_dopunske='1';
 				$ima='11';
+				$message['razlika']=$razlika2;
+				$polu_dobitak=2; //oba su pogodena
+			}
+			if(sizeof($razlika2)===1) //pogođena je kombinacija i jedan dopunski broj
+			{
+				$message['i_dop']='11';
+				$ima_dopunske='1';
+				$ima='11';
+				$message['razlika']=$razlika2;
+				$polu_dobitak=1;
+			}
+			if(sizeof($razlika2)===2) //pogođena je kombinacija, ali ne i dopunska slova
+			{
+				$message['i_dop']='10';
+				$ima_dopunske='0';
+				$ima='10';
 			}
 			else {
 				$message['i_dop']='10';
 				$ima_dopunske='0';
 				$ima='10';
+				$message['razlika']=$razlika2;
+				$polu_dobitak=0;
 			}
-			$message[ 'dobitni_listic' ][] = array( 'korisnicko_ime' => $row['korisnicko_ime'], 'id' => $row['id'], 'kombinacija' => $row['kombinacija'], 'dopunski' =>$row['dopunski'] );
+			$message[ 'dobitni_listic' ][] = array( 'korisnicko_ime' => $row['korisnicko_ime'], 'id' => $row['id'], 'kombinacija' => $row['kombinacija'], 'dopunski' =>$row['dopunski'], 'poludobitak'=>$row['polu_dobitak'] );
 			$message['ima']=1;
 			$ima=1;
 			$nadimak = $row['korisnicko_ime'];
@@ -319,6 +426,8 @@ if(isset($_GET['vrijeme_3']) && isset($_GET['datum']))
 		$message['ima']=0;
 		$ima='0';
 	$message['i_dop']='0';
+	$message['razlika']=$razlika2;
+	$polu_dobitak=0;
 		}
 
 
@@ -338,10 +447,20 @@ if(isset($_GET['vrijeme_3']) && isset($_GET['datum']))
 		if($ima==='11')  //ako ima slovo i brojeve, onda je 11
 		{
 			$st = $db->exec(  "UPDATE Euro SET dobitan = '11' WHERE korisnicko_ime = '".$nadimak."' " );
+			if($polu_dobitak==='2')
+			{
+					$st = $db->exec(  "UPDATE Loto SET poludobitak = '7' WHERE korisnicko_ime = '".$nadimak."' " );
+			}
+			if($polu_dobitak==='1')
+			{
+					$st = $db->exec(  "UPDATE Loto SET poludobitak = '6' WHERE korisnicko_ime = '".$nadimak."' " );
+			}
+
 		}
 		if($ima==='10') // ako ima slovo ali nema brojeve, onda je 10
 		{
 			$st = $db->exec(  "UPDATE Euro SET dobitan = '10' WHERE korisnicko_ime = '".$nadimak."' " );
+			$st = $db->exec(  "UPDATE Loto SET poludobitak = '0' WHERE korisnicko_ime = '".$nadimak."' " );
 
 		}
 

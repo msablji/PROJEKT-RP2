@@ -5,6 +5,8 @@ session_start();
 
 
 
+
+
 if(isset($_POST['loto']) || isset($_POST["restartaj"]))
 {
 	nova_igra_kreni();
@@ -30,24 +32,25 @@ if(isset($_POST['klikni_na']))
 		$koje_slovo=$_POST['slovo'];
 		$koliko_novaca=4;
 	}
-	else 
+	else
 	{$koje_slovo="";
      $koliko_novaca=3;
      }
-	
+
       if($_SESSION['kraj']===7)
       {
 		   $db = new PDO('mysql:host=rp2.studenti.math.hr; dbname=martinek; charset=utf8', 'student', 'pass.mysql');
-            $niz_je= implode(" ",$_SESSION['ajde_uplati']);
+			 			sort($_SESSION['ajde_uplati']);
+					  $niz_je= implode(" ",$_SESSION['ajde_uplati']);
             $kontrolni_broj2 = rand(10000, 99999);
-           
+
 
 
 
             try
             {
 
-              $st = $db->prepare( "INSERT INTO Loto(kombinacija, slovo, id, korisnicko_ime,proslo,dobitan ) VALUES (:br,:slov,:kb,:nad,'0', '0')" );
+              $st = $db->prepare( "INSERT INTO Loto(kombinacija, slovo, id, korisnicko_ime,proslo,dobitan, polu_dobitak ) VALUES (:br,:slov,:kb,:nad,'0', '0', '0')" );
 
               $st->execute( array( 'nad' => $_SESSION['korisnik'],
                                     'kb' => $kontrolni_broj2,
@@ -74,13 +77,13 @@ if(isset($_POST['klikni_na']))
 
               $st = $db->exec( "UPDATE Igraci SET uplata = '$ostatak' WHERE nadimak ='$naziv' " );
 
-              $poruka= "Uspješno ste uplatili listić!  "."* Korisnik: " .$_SESSION['korisnik']."* Kombinacija: " .$niz_je."* Vaš kontrolni broj:" .$kontrolni_broj2."* Na računu imate još: ".$ostatak." kuna." . "* PRATITE IZVLAČENJE!";
+              $poruka= "Uspješno ste uplatili listić!  "."\\n* Korisnik: " .$_SESSION['korisnik']."\\n* Kombinacija: " .$niz_je."\\n* Vaš kontrolni broj:" .$kontrolni_broj2."\\n* Na računu imate još: ".$ostatak." kuna." . "\\n* PRATITE IZVLAČENJE!";
 
 
           echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
 		  $_SESSION['iznos_u_kn']=$ostatak;
 		  nova_igra_kreni();
-		  
+
             }
             else {
               echo '<script language="javascript" type="text/javascript">
@@ -97,20 +100,20 @@ if(isset($_POST['klikni_na']))
                     alert("Niste unijeli 7 brojeva.");
             </script>';
     }
-  
-	
+
+
 }
 
 
 
 if(isset($_POST['broj']))
 {
-$br=$_POST['broj'];	
+$br=$_POST['broj'];
 for( $i = 1; $i <= 39; ++$i )
 {
-	
+
 if($i == $br)
-{	
+{
 if($_SESSION['kraj'] < 7 && $_SESSION['kliknuto'][$br-1]==0 )
 {
 	$_SESSION['kraj']++;
@@ -132,7 +135,7 @@ else if($_SESSION['kraj'] > 6)
 {
 	echo '<script language="javascript" type="text/javascript">
                     alert("Unijeli ste sve brojeve. Potvrdite unos.");
-                    
+
             </script>';
 }
 }
@@ -160,7 +163,7 @@ else if($_SESSION['kraj'] > 6)
   padding-bottom: 2px;
   }
   div{
-       
+
         border-color: black;
         height:250px;
         text-align:center;
@@ -193,7 +196,7 @@ aside {
 
 <div>
   <h2 style="font-family:courier;">ODABRANA JE KOMBINACIJA:</h2>
-  <p style="color:#DC143C; font-size:300%;"><?php 
+  <p style="color:#DC143C; font-size:300%;"><?php
   $brojimo=0;
   foreach ($_SESSION['ajde_uplati'] as $key => $value) {
     if($value!=0)
@@ -204,7 +207,7 @@ aside {
 			echo $value." , ";
 		}
 		else echo $value;
-	}		
+	}
 }?>
   </p>
 </div>
@@ -229,6 +232,6 @@ aside {
   </table></br></br>
 
     </form>
-	
+
     </body>
     </html>

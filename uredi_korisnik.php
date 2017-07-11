@@ -1,7 +1,7 @@
 <!doctype html>
 <head>
 	<meta charset="utf8">
-<link rel="stylesheet" type="text/css" href="style.css">
+
 </head>
 <body>
 <?php
@@ -47,7 +47,7 @@ if(isset($_POST[$im])){?>
 	
 	
 	
-	<input type="hidden" name="ime_korisnika" value="<?php echo $row["ime"]; ?>" >
+	<input type="hidden" name="nadimak_korisnika" value="<?php echo $row["nadimak"]; ?>" >
 	<input type="submit" name="uredi" value="Uredi" id="sub" style=" height: 50px; width: 100px;">
 	
 	<input type="submit" value="izbrisi" name="izbrisi" style=" height: 50px; width: 100px;">
@@ -56,6 +56,66 @@ if(isset($_POST[$im])){?>
 }
 
 }
+
+if(isset($_POST['dodaj']))
+{
+	?>
+	<div>	
+<form method="post" action="uredi_korisnik.php">
+	Ime korisnika:
+	<input type="text" name="ime2" ></br>
+	Prezime korisnika:
+	<input type="text" name="prezime2" ></br>
+	Nadimak korisnika:
+	<input type="text" name="nadimak2" ></br>
+	Račun korisnika:
+	<input type="text" name="racun2" ></br>
+	Kontrolni broj računa korisnika:
+	<input type="text" name="kontrol2"></br>
+	Email korisnika:
+	<input type="text" name="mail2"></br>
+	OIB korisnika:
+	<input type="text" name="oib2" ></br>
+	Password korisnika:
+	<input type="text" name="pass2" ></br>
+	Stanje računa:
+	<input type="text" name="upl2" ></br>
+	
+	<input type="submit" name="dodaj_ga" value="Dodaj korisnika" id="sub" style=" height: 50px; width: 100px;">
+	
+	
+</form></div>
+<?php	}
+if(isset($_POST['dodaj_ga']))
+{
+
+
+        try
+        {
+			$niz = '';
+    		for( $i = 0; $i < 20; ++$i )
+    			$niz .= chr( rand(0, 25) + ord( 'a' ) );
+
+        $hash=password_hash($_POST['pass2'], PASSWORD_DEFAULT);
+          $st = $db->prepare( 'INSERT INTO Igraci(ime,prezime, nadimak, lozinka, email,oib, racun, kontr_br,uplata, niz, kliknuo, admin ) VALUES ' .
+                            '(:im,:pr,:nad, :loz, :em,:oib, :rac,:kontr,:upl, :ni, 1, 0)' );
+
+          $st->execute( array( 'im' => $_POST['ime2'],
+                                'pr' => $_POST['prezime2'],
+                                'nad' => $_POST['nadimak2'],
+                                'loz' => $hash,
+                                'em' => $_POST['mail2'],
+                                'oib' => $_POST['oib2'],
+                              'rac' => $_POST['racun2'],
+                             'kontr' => $_POST['kontrol2'],
+							 'upl' => $_POST['upl2'],
+                             'ni'  => $niz ) );
+        }
+        catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+
+        echo '<script type="text/javascript">alert("Dodali ste ubazu novog korisnika.");</script>';
+}
+
 if(isset($_POST['uredi']))
 {
 	try
@@ -65,7 +125,7 @@ if(isset($_POST['uredi']))
     			$niz .= chr( rand(0, 25) + ord( 'a' ) );
 
         $hash=password_hash($_POST['pass'], PASSWORD_DEFAULT);
-          $st = $db->prepare( 'UPDATE `Igraci` SET `ime`=:im,`prezime`=:pr,`nadimak`=:nad,`lozinka`=:loz,`OIB`=:oib,`email`=:em,`racun`=:rac,`kontr_br`=:kontr,`uplata`=:upl,`niz`=:ni WHERE ime="'.$_POST['ime_korisnika'].'"' );
+          $st = $db->prepare( 'UPDATE `Igraci` SET `ime`=:im,`prezime`=:pr,`nadimak`=:nad,`lozinka`=:loz,`OIB`=:oib,`email`=:em,`racun`=:rac,`kontr_br`=:kontr,`uplata`=:upl,`niz`=:ni WHERE nadimak="'.$_POST['nadimak_korisnika'].'"' );
 
           $st->execute( array( 'im' => $_POST['ime'],
                                 'pr' => $_POST['prezime'],
@@ -91,115 +151,15 @@ if(isset($_POST['izadi']))
 
 if(isset($_POST['izbrisi']))
 {
+	echo '<script type="text/javascript">var ret = confirm("Jeste sigurni da želite izbaciti korisnika iz baze podataka? Ukoliko to napravite, taj korisnik više ne postoji!");
+	</script>';
 	
+	echo "<script>if(ret===true){</script>";
+	$st = $db->prepare( 'DELETE FROM `Igraci` WHERE `nadimak`="'.$_POST['nadimak_korisnika'].'" ' );
+
+	$st->execute(); 
+	echo "<script>}</script>";
 }
-
-/*if(isset($_POST['ime_korisnika'])){
-	echo "Uređujemo korisnika: <b>".$_POST['ime_korisnika']."</b>";
-}
-
-
-
-
-//promijeni ono što je spremljeno u tablici
-if(isset($_POST["uredi"])){
-	
-	//tu updateamo tablicu sa artiklima
-	$st = $db->prepare( 'UPDATE Korisnici SET Ime="'.$_POST["ime"].'", Prezime="'.$_POST["prezime"].'", Nadimak="'.$_POST["nadimak"].'", Lokacija="'.$_POST["lokacija"].'",Password="'.$_POST["pass"].'" WHERE Id='.$_POST["id_korisnika"].' ');
-	$st->execute();
-	header('Location: uredjivanje_korisnika.php');
-	
-}
-
-
-//brisanje korisnika
-if(isset($_POST["izbrisi"])){
-	$st = $db->prepare('DELETE FROM Korisnici WHERE Id='.$_POST["id_korisnika"].'');
-	$st->execute();
-	header('Location: uredjivanje_korisnika.php');
-}
-
-
-$st = $db->prepare( 'SELECT * from Korisnici');
-$st->execute();
-while( $row = $st->fetch() )
-{
-	if($row['Id']==$_POST['Id_korisnika']) 
-	{
-
-?>
-
-<!doctype html>
-<head>
-	<meta charset="utf8">
-<link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body>
-
-<form method='post' action='uredjivanje_korisnika.php'>
-		Povratak na prethodnu stranicu:
-		<input type='submit' name='povratak' value='Povratak'>		
-</form>
-
-
-<form method="post" action="uredi_korisnik.php">
-	Ime korisnika:
-	<input type="text" name="ime" value="<?php echo $row['Ime']; ?>" id="ime"></br>
-	Prezime korisnika:
-	<input type="text" name="prezime" value="<?php echo $row['Prezime']; ?>" id="prezime"></br>
-	Nadimak korisnika:
-	<input type="text" name="nadimak" value="<?php echo $row['Nadimak']; ?>" id="nadimak"></br>
-	Lokacija korisnika:
-	<input type="text" name="lokacija" value="<?php echo $row['Lokacija']; ?>" id="lokacija"></br>
-	Password korisnika:
-	<input type="text" name="pass" value="<?php echo $row['Password']; ?>"></br>
-	
-	
-	<input type="hidden" name="id_korisnika" value="<?php echo $row["Id"]; ?>" >
-	<input type="submit" name="uredi" value="uredi" id="sub">
-	
-	<input type="submit" value="izbrisi" name="izbrisi">
-</form>
-
-<?php
-//zatvaramo php zagrade
-}}
-?>
-
-
-<script>
-
-document.getElementById("sub").style.background='#00FFFF';
-document.getElementById("sub").disabled = false;
-
-if (document.layers) {
-  document.captureEvents(Event.KEYDOWN);
-}
-
-document.onkeyup = function (evt) {
-	var re = /^([A-Za-z0-9čćšžđŠĐČĆŽ]+)$/;
-	var re2 = /^([ A-Za-z0-9čćšžđŠĐČĆŽ,]+)$/;
-	var ime = document.getElementById("ime").value;
-	var prezime = document.getElementById("prezime").value;
-	var lokacija = document.getElementById("lokacija").value;
-	var nadimak = document.getElementById("nadimak").value;
-	//window.alert(ime+ prezime+lokacija+nadimak);
-	if(re.test(ime) && re.test(prezime) && re2.test(lokacija) && re.test(nadimak)){
-			//window.alert(ime+" istp");
-			document.getElementById("sub").disabled = false;
-			document.getElementById("sub").style.background='#00FFFF';
-	}
-		 
-	else{
-		//window.alert(ime+" nije");
-		document.getElementById("sub").disabled = true;
-		document.getElementById("sub").style.background='#FF0000';
-	}
-  
-};
-	
-</script>
-*/
 ?>
 <style>
 div{
@@ -219,6 +179,7 @@ div{
 </style>
 </body>
 <form method="post" action="uredi_korisnik.php">
-</br></br></br><input type="submit" name="izadi" value="IZADI!" id="sub" style=" height: 50px; width: 100px;"></form>
+</br></br></br><input type="submit" name="izadi" value="IZADI!" id="sub" style=" height: 50px; width: 100px;">
+<input type="submit" name="dodaj" value="Dodaj" id="sub" style=" height: 50px; width: 100px;"></form>
 </html> 
 

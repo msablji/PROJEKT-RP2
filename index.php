@@ -316,7 +316,7 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
   $db=DB::getConnection();
   try
   {
-    $st = $db->prepare( 'SELECT dobitan FROM Euro WHERE id= :kb AND proslo= :pr' );
+    $st = $db->prepare( 'SELECT dobitan, polu_dobitak FROM Euro WHERE id= :kb AND proslo= :pr' );
     $st->execute( array( 'kb' =>$_POST['provjera_dobitka'], 'pr'=>'1' ) );
   }
   catch( PDOException $e ) { echo 'Greška:' . $e->getMessage() ; return; }
@@ -327,10 +327,17 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
 
 		if($row['dobitan']==='11')
     {
-        $poruka= "IGRA EUROJACKPOT"."\\nListić je dobitan!\\nPogođena je i kombinacija i dopunski broj!\\nDobitak: 344.448.023,69 kuna! ";
+        if($row['polu_dobitak']==='2')
+        {
+          $poruka= "IGRA EUROJACKPOT"."\\nListić je dobitan!\\nPogođena je i kombinacija i oba dopunska broja!\\nDobitak: 344.448.023,69 kuna! ";
+        }
+        if($row['polu_dobitak']==='1')
+        {
+          $poruka= "IGRA EUROJACKPOT"."\\nListić je dobitan!\\nPogođena je i kombinacija i jedan dopunski broj!\\nDobitak: 5.935.366,28kuna! ";
+        }
+
         echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
         $valjan=1;
-
     }
     if($row['dobitan']==='10')
     {
@@ -352,7 +359,7 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
   $db=DB::getConnection();
   try
   {
-    $st = $db->prepare( 'SELECT dobitan FROM Loto WHERE id= :kb AND proslo= :pr' );
+    $st = $db->prepare( 'SELECT dobitan, polu_dobitak FROM Loto WHERE id= :kb AND proslo= :pr' );
     $st->execute( array( 'kb' =>$_POST['provjera_dobitka'], 'pr'=>'1' ) );
   }
   catch( PDOException $e ) { echo 'Greška:' . $e->getMessage() ; return; }
@@ -363,10 +370,25 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
 
 		if($row['dobitan']==='11')
     {
+      if($row['polu_dobitak']==='7')
+      {
         $poruka= "IGRA LOTO 7/49"."\\nListić je dobitan!\\Pogođena je i kombinacija i slovo!\\Dobitak: 14.188.524,98 kuna!";
-        echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
-        $valjan=1;
+      }
+      if($row['polu_dobitak']==='6')
+      {
+        $poruka= "IGRA LOTO 7/49"."\\nListić je dobitan!\\Pogođeno je 6 brojeva i slovo!\\Dobitak: 19.479,58 kuna!";
+      }
+      if($row['polu_dobitak']==='5')
+      {
+        $poruka= "IGRA LOTO 7/49"."\\nListić je dobitan!\\Pogođeno je 5 brojeva i slovo!\\Dobitak: 338,11 kuna!";
+      }
+      if($row['polu_dobitak']==='4')
+      {
+        $poruka= "IGRA LOTO 7/49"."\\nListić je dobitan!\\Pogođena su 4 broja i slovo!\\Dobitak: 42,68 kuna!";
+      }
 
+      echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
+      $valjan=1;
     }
     if($row['dobitan']==='10')
     {
@@ -399,7 +421,7 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
 		if($row['dobio']==='1')
     {
         $dobitak=$row['dobitak'];
-      
+
         $poruka= "IGRA KLAĐENJE NA KONJE"."\\nListić je dobitan!\\nDobitak: ".$dobitak." kuna!";
         echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
         $valjan=1;
@@ -421,200 +443,205 @@ if(isset($_POST['provjera']) && $_POST['provjera_dobitka']!='')  //za provjeru d
   }
 }
 
-
+if(isset($_POST['profil']))
+{
+ header('Location: profil.php');
+  exit;
+}
 
  ?>
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-    <style>
-    body{
-       font-family:courier;
-       font-size:12pt;
-    }
 
-    h3 { border-top: 1px solid #000;
-      border-bottom: 1px solid #000; }
+ <!DOCTYPE html>
+ <html>
+   <head>
+     <meta charset="utf-8">
+     <title></title>
+     <style>
+     body{
+        font-family:courier;
+        font-size:12pt;
+     }
 
-    div{
+     h3 { border-top: 1px solid #000;
+       border-bottom: 1px solid #000; }
 
-        border-color: black;
-        height:400px;
-        text-align:center;
-        border: 1px solid black;
-        border-radius: 5px;
-        position:absolute;
-        top:100px;
-        right:0;
-		background-color:  #ffffcc;
-	}
-div.logiran{
-  border-color: black;
-        height:250px;
-		width:350px;
-        text-align:left;
-        border: 1px solid black;
-        border-radius: 5px;
-        position:absolute;
-        top:0;
-        right:0;
-}
-div.gumbi{
-  border-color: black;
-  height:50px;
-  width: 65%;
-  text-align:left;
-  border: 1px solid black;
-  border-radius: 5px;
-background-color:  #ffffcc;
-  position:absolute;
-  top:30%;
-  left:0%;
-}
-div.gumbi2{
-  border-color: black;
-  height:50px;
-  width: 65%;
-  text-align:left;
-  border: 1px solid black;
-  border-radius: 5px;
-background-color:  #ffffcc;
-  position:absolute;
-  top:37%;
-  left:0%;
-}
-.slika{
-	width: 50%;
-	height:250px;
+     div{
 
-}
+         border-color: black;
+         height:400px;
+         text-align:center;
+         border: 1px solid black;
+         border-radius: 5px;
+         position:absolute;
+         top:100px;
+         right:0;
+ 		background-color:  #ffffcc;
+ 	}
+ div.logiran{
+   border-color: black;
+         height:250px;
+ 		width:350px;
+         text-align:left;
+         border: 1px solid black;
+         border-radius: 5px;
+         position:absolute;
+         top:0;
+         right:0;
+ }
+ div.gumbi{
+   border-color: black;
+   height:50px;
+   width: 65%;
+   text-align:left;
+   border: 1px solid black;
+   border-radius: 5px;
+ background-color:  #ffffcc;
+   position:absolute;
+   top:30%;
+   left:0%;
+ }
+ div.gumbi2{
+   border-color: black;
+   height:50px;
+   width: 65%;
+   text-align:left;
+   border: 1px solid black;
+   border-radius: 5px;
+ background-color:  #ffffcc;
+   position:absolute;
+   top:37%;
+   left:0%;
+ }
+ .slika{
+ 	width: 50%;
+ 	height:250px;
 
-
-article {
-	margin-top:20px;
-	padding:5px;
-	width:80%;
-	float:left;
-	}
-
-aside {
-	text-align:center;
-	border: 1px solid black;
-	margin-top:2px;
-	margin-left:5px;
-	float:right;
-	width:300px;
-	padding:5px;
-	background-image: url("buba1.jpg");
-
-	}
-
-</style>
-  </head>
-  <body>
-    <header>
-   <img src="jedan.jpg"  class="slika" alt="slika" >
-  </header>
-
-  <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-<?php
-//ako nije ulogiran, prikazat će formu za logiranje
-if($_SESSION['logiran']===0)
-{?>
-  <div>
- <h3>Za postojeće korisnike:</h3>
-  Korisničko ime: <input type="text" name="nadimak1"/>
-  </br>
-  Lozinka: <input type="password" name="lozinka1"/>
-  </br>
-  <button type="submit" name="log">Ulogiraj se</button>
-</br>
-<h3>Za nove korisnike:</h3>
-Ime: <input type="text" name="ime"/>
-</br>
-
-Prezime: <input type="text" name="prezime"/>
-</br>
-
-OIB: <input type="text" name="oib"/>
-</br>
-
-Korisničko ime: <input type="text" name="nadimak2"/>
-</br>
-Lozinka: <input type="password" name="lozinka2"/>
-</br>
-  E-mail: <input type="email" name="email"/>
-  </br>
-  Broj računa:  <input type="text" name="racun"/>
-    </br>
-  Kontrolni broj:  <input type="text" name="kontr_br"/>
-      </br>
-      Iznos uplate: <input type="text" name="uplata"/>
-  <button type="submit" name="novi">Stvori novog korisnika</button>
-</div>
-  <?php
-}
-
-//ako je ulogiran, prikazat će ime korisnika i gumb za logout
-if($_SESSION['logiran']===1)
-{ if($_SESSION['jel_admin']===0){?>
-  <div class="logiran">
-  <?php
-  echo '<h2 style="text-align:center;">'."  Korisnik: " .$_SESSION['korisnik'] ."  ". '</h2>';
-  echo "Na računu imate:".$_SESSION['iznos_u_kn']."kn"."</br>";
-	?><form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-	Unesi iznos:<input type="text"  name="iznos" value="" /></br>
-	 Broj računa:<input type="text"  name="br_rac" value="" /></br>
-	 Kontrolni br:<input type="text"  name="kontrol_br" value="" /></br></br>
-	 <button type="submit" name="uplati_pare2" style=" height: 40px; width: 80px;">Uplati</button>
-     <button type="submit" name="logout"  style=" height: 40px; width: 80px;">Logout</button></form>
-  </div>
-  <aside><nav>
-<ul class="a"><h1 style="font-family:courier">Igraj!</h1>
-  <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-  <li> <button type="submit" style=" height: 40px; width: 120px; font-family:courier"id="bingo" name="bingo">Bingo</button></li>
-  <li><button type="submit" style=" height: 40px; width: 120px; font-family:courier" id="loto" name="loto">Loto 7/39</button></li>
-  <li><button type="submit" style=" height: 40px; width: 120px; font-family:courier" id="kladenje" name="kladenje">Klađenje</button></li>
-  <li><button type="submit" style=" height: 40px; width: 120px; font-family:courier" id="euro" name="euro">Eurojackpot</button></li>
-</ul> </form>
-</nav></aside>
-
-<?php
-}
-else
-{?>
-	<div class="logiran">
-  <?php
-  echo '<h2 style="text-align:center;">'."Logirani ste kao admin! ". '</h2>';
-	?><form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-	 <button type="submit" name="uredi_igru" style="height: 50px; width: 100px;">Uredi igre</button>
-     <button type="submit" name="uredi_korisnike"  style="height: 50px; width: 100px;">Uredi korisnike</button></br>
-	 <button type="submit" name="logout"  style=" height: 50px; width: 100px;">Logout</button></form>
-  </div><?php
-}
-} ?>
-<div class="gumbi">
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-Unesite kontrolni broj:  <input type="text" id="provjera_dobitka" name="provjera_dobitka"/>
-  <button type="submit" id="provjera" name="provjera" style=" height: 40px; width: 150px;font-family:courier;"  >Provjera dobitka!</button>
-  <button type="submit" id="admin" name="admin" style=" height: 40px; width: 300px;font-family:courier;"  >Pogledaj nekoliko zadnjih izvlačenja!</button></form>
-</div>
-
- <div class="gumbi2" >
- Emisije sa zadnjih izvlačenja:<a href="https://www.youtube.com/watch?v=s9hQBKNoOPo" > Bingo </a> <a href="https://www.youtube.com/watch?v=OFBnQP4jcqo" > Loto 7/39 </a> <a href="https://www.youtube.com/watch?v=tj4r8b9ePUo"> Eurojackpot </a>
-
-</div>
-</br></br></br></br></br></br>
-<article>
-
-<img src="eurojack.jpg" class="slikice" alt="slika" >
-<img src="bingo.jpg" class="slikice" alt="slika" >
+ }
 
 
-</article>
-  </body>
-</html>
+ article {
+ 	margin-top:20px;
+ 	padding:5px;
+ 	width:80%;
+ 	float:left;
+ 	}
+
+ aside {
+ 	text-align:center;
+ 	border: 1px solid black;
+ 	margin-top:2px;
+ 	margin-left:5px;
+ 	float:right;
+ 	width:300px;
+ 	padding:5px;
+ 	background-image: url("buba1.jpg");
+
+ 	}
+
+ </style>
+   </head>
+   <body>
+     <header>
+    <img src="jedan.jpg"  class="slika" alt="slika" >
+   </header>
+
+   <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+ <?php
+ //ako nije ulogiran, prikazat će formu za logiranje
+ if($_SESSION['logiran']===0)
+ {?>
+   <div>
+  <h3>Za postojeće korisnike:</h3>
+   Korisničko ime: <input type="text" name="nadimak1"/>
+   </br>
+   Lozinka: <input type="password" name="lozinka1"/>
+   </br>
+   <button type="submit" name="log">Ulogiraj se</button>
+ </br>
+ <h3>Za nove korisnike:</h3>
+ Ime: <input type="text" name="ime"/>
+ </br>
+
+ Prezime: <input type="text" name="prezime"/>
+ </br>
+
+ OIB: <input type="text" name="oib"/>
+ </br>
+
+ Korisničko ime: <input type="text" name="nadimak2"/>
+ </br>
+ Lozinka: <input type="password" name="lozinka2"/>
+ </br>
+   E-mail: <input type="email" name="email"/>
+   </br>
+   Broj računa:  <input type="text" name="racun"/>
+     </br>
+   Kontrolni broj:  <input type="text" name="kontr_br"/>
+       </br>
+       Iznos uplate: <input type="text" name="uplata"/>
+   <button type="submit" name="novi">Stvori novog korisnika</button>
+ </div>
+   <?php
+ }
+
+ //ako je ulogiran, prikazat će ime korisnika i gumb za logout
+ if($_SESSION['logiran']===1)
+ { if($_SESSION['jel_admin']===0){?>
+   <div class="logiran">
+   <?php
+   echo '<h2 style="text-align:center;">'."  Korisnik: " .$_SESSION['korisnik'] ."  ". '</h2>';
+   echo "Na računu imate:".$_SESSION['iznos_u_kn']."kn"."</br>";
+ 	?><form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+ 	Unesi iznos:<input type="text"  name="iznos" value="" /></br>
+ 	 Broj računa:<input type="text"  name="br_rac" value="" /></br>
+ 	 Kontrolni br:<input type="text"  name="kontrol_br" value="" /></br></br>
+ 	 <button type="submit" name="uplati_pare2" style=" height: 40px; width: 80px;">Uplati</button>
+ 	 <button type="submit" name="profil" style=" height: 40px; width: 80px;">Vidi profil</button>
+      <button type="submit" name="logout"  style=" height: 40px; width: 80px;">Logout</button></form>
+   </div>
+   <aside><nav>
+ <ul class="a"><h1 style="font-family:courier">Igraj!</h1>
+   <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+   <li> <button type="submit" style=" height: 40px; width: 120px; font-family:courier"id="bingo" name="bingo">Bingo</button></li>
+   <li><button type="submit" style=" height: 40px; width: 120px; font-family:courier" id="loto" name="loto">Loto 7/39</button></li>
+   <li><button type="submit" style=" height: 40px; width: 120px; font-family:courier" id="kladenje" name="kladenje">Klađenje</button></li>
+   <li><button type="submit" style=" height: 40px; width: 120px; font-family:courier" id="euro" name="euro">Eurojackpot</button></li>
+ </ul> </form>
+ </nav></aside>
+
+ <?php
+ }
+ else
+ {?>
+ 	<div class="logiran">
+   <?php
+   echo '<h2 style="text-align:center;">'."Logirani ste kao admin! ". '</h2>';
+ 	?><form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+      <button type="submit" name="uredi_korisnike"  style="height: 50px; width: 100px;">Uredi korisnike</button></br>
+ 	 <button type="submit" name="logout"  style=" height: 50px; width: 100px;">Logout</button></form>
+   </div><?php
+ }
+ } ?>
+ <div class="gumbi">
+ <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+
+ Unesite kontrolni broj:  <input type="text" id="provjera_dobitka" name="provjera_dobitka"/>
+   <button type="submit" id="provjera" name="provjera" style=" height: 40px; width: 150px;font-family:courier;"  >Provjera dobitka!</button>
+   <button type="submit" id="admin" name="admin" style=" height: 40px; width: 300px;font-family:courier;"  >Pogledaj nekoliko zadnjih izvlačenja!</button></form>
+ </div>
+
+  <div class="gumbi2" >
+  Emisije sa zadnjih izvlačenja:<a href="https://www.youtube.com/watch?v=s9hQBKNoOPo" > Bingo </a> <a href="https://www.youtube.com/watch?v=OFBnQP4jcqo" > Loto 7/39 </a> <a href="https://www.youtube.com/watch?v=tj4r8b9ePUo"> Eurojackpot </a>
+
+ </div>
+ </br></br></br></br></br></br>
+ <article>
+
+ <img src="eurojack.jpg" class="slikice" alt="slika" >
+ <img src="bingo.jpg" class="slikice" alt="slika" >
+
+
+ </article>
+   </body>
+ </html>

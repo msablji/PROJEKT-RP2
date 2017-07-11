@@ -26,13 +26,13 @@ if(isset($_POST['odi_na_pocetak']))
 
 if(isset($_POST['broj1']))
 {
-$br=$_POST['broj1'];	
+$br=$_POST['broj1'];
 
 for( $i = 1; $i <= 50; ++$i )
 {
-	
+
 if($i == $br)
-{	
+{
 if($_SESSION['jesmo_gotovi'] < 5 && $_SESSION['stisli'][$br-1]==0 )
 {
 	$_SESSION['jesmo_gotovi']++;
@@ -51,10 +51,10 @@ $_SESSION['stisli'][$br-1]=0;
 $_SESSION['jesmo_gotovi']--;
 }
 
-else 
+else
 {echo '<script language="javascript" type="text/javascript">
                     alert("Unijeli ste sve brojeve.Sada odaberite dopunske brojeve!!");
-                    
+
             </script>';
 }}
 }
@@ -63,13 +63,13 @@ else
 
 if(isset($_POST['broj']))
 {
-$br=$_POST['broj'];	
+$br=$_POST['broj'];
 
 for( $i = 1; $i <= 10; ++$i )
 {
-	
+
 if($i == $br)
-{	
+{
 if($_SESSION['jesmo_gotovi_dodatno'] < 2 && $_SESSION['stisli1'][$br-1]==0 )
 {
 	$_SESSION['jesmo_gotovi_dodatno']++;
@@ -88,10 +88,10 @@ $_SESSION['stisli1'][$br-1]=0;
 $_SESSION['jesmo_gotovi_dodatno']--;
 }
 
-else 
+else
 {echo '<script language="javascript" type="text/javascript">
                     alert("Unijeli ste sve brojeve. Potvrdite unos.");
-                    
+
             </script>';
 }}
 }
@@ -104,17 +104,19 @@ if(isset($_POST['klikni_na2']))
       if($_SESSION['jesmo_gotovi']===5 && $_SESSION['jesmo_gotovi_dodatno']===2)
       {
 		   $db = new PDO('mysql:host=rp2.studenti.math.hr; dbname=martinek; charset=utf8', 'student', 'pass.mysql');
+			 			sort($_SESSION['koji_su']);
+						sort($_SESSION['dodatni1']);
             $niz_je1= implode(" ",$_SESSION['koji_su']);
-			$niz_je2= implode(" ",$_SESSION['dodatni1']);
+						$niz_je2= implode(" ",$_SESSION['dodatni1']);
             $kontrolni_broj1 = rand(10000, 99999);
-           
+
 
 
 
             try
             {
 
-              $st = $db->prepare( "INSERT INTO Euro(kombinacija, dopunski, id, korisnicko_ime,proslo,dobitan ) VALUES (:br,:br2,:kb,:nad,'0', '0')" );
+              $st = $db->prepare( "INSERT INTO Euro(kombinacija, dopunski, id, korisnicko_ime,proslo,dobitan, polu_dobitak ) VALUES (:br,:br2,:kb,:nad,'0', '0', '0')" );
 
               $st->execute( array( 'nad' => $_SESSION['korisnik'],
                                     'kb' => $kontrolni_broj1,
@@ -141,13 +143,13 @@ if(isset($_POST['klikni_na2']))
 
               $st = $db->exec( "UPDATE Igraci SET uplata = '$ostatak' WHERE nadimak ='$naziv' " );
 
-              $poruka= "Uspješno ste uplatili listić!  "."* Korisnik: " .$_SESSION['korisnik']."* Kombinacija: " .$niz_je1."+ " .$niz_je2."* Vaš kontrolni broj:" .$kontrolni_broj1."* Na računu imate još: ".$ostatak." kuna." . "* PRATITE IZVLAČENJE!";
+              $poruka= "Uspješno ste uplatili listić!  "."\\n* Korisnik: " .$_SESSION['korisnik']."\\n* Kombinacija: " .$niz_je1."+ " .$niz_je2."\\n* Vaš kontrolni broj:" .$kontrolni_broj1."\\n* Na računu imate još: ".$ostatak." kuna." . "\\n* PRATITE IZVLAČENJE!";
 
 
           echo '<script type="text/javascript">alert("'.$poruka.'");</script>';
 		  $_SESSION['iznos_u_kn']=$ostatak;
 		  pocni();
-		  
+
             }
             else {
               echo '<script language="javascript" type="text/javascript">
@@ -164,13 +166,16 @@ if(isset($_POST['klikni_na2']))
                     alert("Niste unijeli 7 brojeva. 5 osnovnih i 2 dopunska");
             </script>';
     }
-  
-	
+
+
 }
 
 
 
 ?>
+
+
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -186,7 +191,7 @@ if(isset($_POST['klikni_na2']))
   padding-bottom: 2px;
   }
   div{
-       
+
         border-color: black;
         height:250px;
         text-align:center;
@@ -217,7 +222,7 @@ aside {
 <div>
   <h2 style="font-family:courier;">ODABRANA JE KOMBINACIJA:</h2>
   <p style="color:#DC143C; font-size:250%;"><?php
-$brojimo2=0;  
+$brojimo2=0;
   foreach ($_SESSION['koji_su'] as $key => $value) {
     if($value!=0) {
 		$brojimo2++;
@@ -229,7 +234,7 @@ $brojimo2=0;
 	}
 }$brojimo2=0; ?></p>
 <h3>Dopunski brojevi su:</h3><p style="color:#DC143C;font-size:150%;">
-<?php 
+<?php
   foreach ($_SESSION['dodatni1'] as $key1 => $value1) {
     if($value1!=0){
 		$brojimo2++;
@@ -271,10 +276,10 @@ $brojimo2=0;
 <input style=" height: 40px; width: 110px;" type="submit" name="klikni_na2"  value="Uplati" />
     <input  style=" height: 40px; width: 110px;" type="submit" name="restartaj" value="Restartaj!"  />
 	<input  style=" height: 40px; width: 160px;" type="submit" name="odi_na_pocetak" value="Vrati se na početak!"  />
-	
+
 
     </form>
-	
-	
+
+
     </body>
     </html>

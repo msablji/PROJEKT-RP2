@@ -48,6 +48,7 @@ if(isset($_POST['broj']) && !isset($_POST['potvrdi']) && !isset($_POST['ponisti'
       if($_SESSION['ukupno']===15)
       {
             $db = new PDO('mysql:host=rp2.studenti.math.hr; dbname=martinek; charset=utf8', 'student', 'pass.mysql');
+            sort($_SESSION['kombinacija']);
             $niz= implode(" ",$_SESSION['kombinacija']);
             $kontrolni_broj = rand(10000, 99999);
 
